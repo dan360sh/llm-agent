@@ -1,28 +1,12 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <div class="app-container">
-      <app-sidebar></app-sidebar>
-      <main class="main-content">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
-  `,
-  styles: [`
-    .app-container {
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .main-content {
-      flex: 1;
-      overflow: hidden;
-    }
-  `]
+  imports: [RouterOutlet],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'LLM Agent';
+  title = 'frontend';
 }

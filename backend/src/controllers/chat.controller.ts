@@ -3,6 +3,87 @@ import { Server } from 'socket.io';
 import { ChatService } from '../services/chat.service';
 import { Chat, Message } from '../models/types';
 
+/**
+ * @swagger
+ * /api/chats:
+ *   get:
+ *     summary: Получить список всех чатов
+ *     tags: [Chats]
+ *     responses:
+ *       200:
+ *         description: Список чатов
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Chat'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   post:
+ *     summary: Создать новый чат
+ *     tags: [Chats]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateChatRequest'
+ *     responses:
+ *       201:
+ *         description: Чат успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Chat'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         description: Агент не найден
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /api/chats/{id}/messages:
+ *   post:
+ *     summary: Отправить сообщение в чат
+ *     tags: [Chats]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID чата
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SendMessageRequest'
+ *     responses:
+ *       200:
+ *         description: Сообщение отправлено (обработка асинхронная)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 chatId:
+ *                   type: string
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
 export class ChatController {
   private router: Router;
   private chatService: ChatService;

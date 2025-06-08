@@ -3,6 +3,170 @@ import { LLMService } from '../services/llm.service';
 import { LLMConfig } from '../models/types';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * @swagger
+ * /api/llm:
+ *   get:
+ *     summary: Получить список всех LLM моделей
+ *     tags: [LLM Models]
+ *     responses:
+ *       200:
+ *         description: Список LLM моделей
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/LLMConfig'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   post:
+ *     summary: Добавить новую LLM модель
+ *     tags: [LLM Models]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, provider, config]
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "OpenRouter GPT-4O"
+ *               provider:
+ *                 type: string
+ *                 enum: [openai, ollama]
+ *                 example: "openai"
+ *               config:
+ *                 oneOf:
+ *                   - $ref: '#/components/schemas/OpenAIConfig'
+ *                   - $ref: '#/components/schemas/OllamaConfig'
+ *               supportsImages:
+ *                 type: boolean
+ *                 example: true
+ *               enabled:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       201:
+ *         description: LLM модель успешно создана
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LLMConfig'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /api/llm/{id}:
+ *   get:
+ *     summary: Получить LLM модель по ID
+ *     tags: [LLM Models]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID LLM модели
+ *     responses:
+ *       200:
+ *         description: LLM модель
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LLMConfig'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   put:
+ *     summary: Обновить LLM модель
+ *     tags: [LLM Models]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID LLM модели
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LLMConfig'
+ *     responses:
+ *       200:
+ *         description: LLM модель успешно обновлена
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LLMConfig'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   delete:
+ *     summary: Удалить LLM модель
+ *     tags: [LLM Models]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID LLM модели
+ *     responses:
+ *       204:
+ *         description: LLM модель успешно удалена
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /api/llm/{id}/test:
+ *   post:
+ *     summary: Тестировать подключение к LLM модели
+ *     tags: [LLM Models]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID LLM модели
+ *     responses:
+ *       200:
+ *         description: Результат тестирования подключения
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   description: Успешность подключения
+ *                 message:
+ *                   type: string
+ *                   description: Сообщение о результате
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
 export class LLMController {
   private router: Router;
   private llmService: LLMService;

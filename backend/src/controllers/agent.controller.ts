@@ -2,6 +2,165 @@ import { Router, Request, Response } from 'express';
 import { AgentService } from '../services/agent.service';
 import { Agent } from '../models/types';
 
+/**
+ * @swagger
+ * /api/agents:
+ *   get:
+ *     summary: Получить список всех агентов
+ *     tags: [Agents]
+ *     responses:
+ *       200:
+ *         description: Список агентов
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Agent'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   post:
+ *     summary: Создать нового агента
+ *     tags: [Agents]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, systemPrompt, llmConfigId]
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Мой ассистент"
+ *               description:
+ *                 type: string
+ *                 example: "Помощник общего назначения"
+ *               systemPrompt:
+ *                 type: string
+ *                 example: "You are a helpful AI assistant."
+ *               llmConfigId:
+ *                 type: string
+ *                 example: "uuid-12345"
+ *               mcpServerIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["mcp-server-1", "mcp-server-2"]
+ *     responses:
+ *       201:
+ *         description: Агент успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agent'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /api/agents/{id}:
+ *   get:
+ *     summary: Получить агента по ID
+ *     tags: [Agents]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID агента
+ *     responses:
+ *       200:
+ *         description: Агент
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agent'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   put:
+ *     summary: Обновить агента
+ *     tags: [Agents]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID агента
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Agent'
+ *     responses:
+ *       200:
+ *         description: Агент успешно обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agent'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ *
+ *   delete:
+ *     summary: Удалить агента
+ *     tags: [Agents]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID агента
+ *     responses:
+ *       204:
+ *         description: Агент успешно удален
+ *       400:
+ *         description: Нельзя удалить последнего агента
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /api/agents/{id}/duplicate:
+ *   post:
+ *     summary: Дублировать агента
+ *     tags: [Agents]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID агента
+ *     responses:
+ *       201:
+ *         description: Агент успешно дублирован
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Agent'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
 export class AgentController {
   private router: Router;
   private agentService: AgentService;

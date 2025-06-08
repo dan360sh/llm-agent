@@ -4,6 +4,8 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import multer from 'multer';
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import { specs } from './utils/swagger.config';
 
 import { StorageService } from './storage/storage.service';
 import { LLMService } from './services/llm.service';
@@ -118,6 +120,15 @@ class App {
   }
 
   private configureRoutes() {
+    // Swagger Documentation
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+      customCss: '.swagger-ui .topbar { display: none }',
+      customSiteTitle: 'LLM Agent API Documentation',
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    }));
+
     // API Routes
     this.app.use('/api/llm', this.llmController.getRouter());
     this.app.use('/api/agents', this.agentController.getRouter());
@@ -125,6 +136,50 @@ class App {
     this.app.use('/api/mcp', this.mcpController.getRouter());
 
     // Upload endpoint
+    /**
+     * @swagger
+     * /api/upload:
+     *   post:
+     *     summary: Загрузить изображение
+     *     tags: [Upload]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               image:
+     *                 type: string
+     *                 format: binary
+     *                 description: Файл изображения (максимум 10MB)
+     *     responses:
+     *       200:
+     *         description: Файл успешно загружен
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 success:
+     *                   type: boolean
+     *                   example: true
+     *                 filename:
+     *                   type: string
+     *                   example: "image-1234567890.jpg"
+     *                 url:
+     *                   type: string
+     *                   example: "/uploads/image-1234567890.jpg"
+     *                 path:
+     *                   type: string
+     *                   example: "/uploads/image-1234567890.jpg"
+     *       400:
+     *         description: Нет файла или неподдерживаемый формат
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Error'
+     */
     this.app.post('/api/upload', (req, res) => {
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -140,6 +195,31 @@ class App {
     });
 
     // Health check
+    /**
+     * @swagger
+     * /api/health:
+     *   get:
+     *     summary: Проверка состояния API
+     *     tags: [Health]
+     *     responses:
+     *       200:
+     *         description: API работает нормально
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 status:
+     *                   type: string
+     *                   example: "ok"
+     *                 timestamp:
+     *                   type: string
+     *                   format: date-time
+     *                   example: "2025-06-08T17:00:00.000Z"
+     *                 version:
+     *                   type: string
+     *                   example: "1.0.0"
+     */
     this.app.get('/api/health', (req, res) => {
       res.json({ 
         status: 'ok', 
@@ -186,6 +266,7 @@ class App {
   public start(port: number = 3000) {
     this.server.listen(port, () => {
       console.log(`🚀 Server running on http://localhost:${port}`);
+      console.log(`📚 API Documentation: http://localhost:${port}/api-docs`);
       console.log(`📁 Data directory: ${path.join(__dirname, '../data')}`);
       console.log(`📷 Uploads directory: ${path.join(__dirname, '../uploads')}`);
     });

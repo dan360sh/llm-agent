@@ -31,5 +31,25 @@
     "supportsImages": true,
     "enabled": true,
     "createdAt": "2025-06-08T17:01:40.483Z"
+  },
+  {
+    "id": "a00fe928-88ad-43ec-8d33-4ea127e409d6",
+    "name": "OpenRouter GPT-20",
+    "provider": "ollama",
+    "config": {
+      "apiKey": "sk-...",
+      "baseURL": "https://api.openai.com/v2",
+      "model": "gpt-4",
+      "maxTokens": 3000,
+      "temperature": 0.7,
+      "headers": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-08T17:57:41.876Z"
   }
 ]
