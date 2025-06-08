@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Agent - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #121212;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1e1e1e;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 LLM Agent - Frontend Test</h1>
+        
+        <div class="test-section">
+            <h2>🔌 API Connection Test</h2>
+            <p>Проверка подключения к бэкенду на localhost:3000</p>
+            <button onclick="testAPI()">Test API Health</button>
+            <button onclick="loadLLMModels()">Load LLM Models</button>
+            <button onclick="loadAgents()">Load Agents</button>
+            <button onclick="loadChats()">Load Chats</button>
+            <div id="apiResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>💬 Chat Test</h2>
+            <p>Тестирование отправки сообщений</p>
+            <input type="text" id="chatMessage" placeholder="Введите сообщение..." style="width: 300px; padding: 8px; background: #333; color: white; border: 1px solid #555; border-radius: 4px;">
+            <button onclick="sendTestMessage()">Send Message</button>
+            <div id="chatResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚙️ WebSocket Test</h2>
+            <p>Тестирование WebSocket подключения</p>
+            <button onclick="testWebSocket()">Connect WebSocket</button>
+            <button onclick="disconnectWebSocket()">Disconnect</button>
+            <div id="wsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📁 Upload Test</h2>
+            <p>Тестирование загрузки файлов</p>
+            <input type="file" id="fileInput" accept="image/*">
+            <button onclick="uploadFile()">Upload Image</button>
+            <div id="uploadResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+        let socket = null;
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                
+                const data = await response.text();
+                let parsedData;
+                try {
+                    parsedData = JSON.parse(data);
+                } catch {
+                    parsedData = data;
+                }
+                
+                return {
+                    status: response.status,
+                    ok: response.ok,
+                    data: parsedData
+                };
+            } catch (error) {
+                return {
+                    status: 0,
+                    ok: false,
+                    error: error.message
+                };
+            }
+        }
+
+        function displayResult(elementId, result, success = null) {
+            const element = document.getElementById(elementId);
+            const successClass = success !== null ? (success ? 'success' : 'error') : (result.ok ? 'success' : 'error');
+            
+            element.innerHTML = `
+                <div class="${successClass}">
+                    <strong>Status:</strong> ${result.status || 'Error'}<br>
+                    <strong>Response:</strong> ${JSON.stringify(result.data || result.error, null, 2)}
+                </div>
+            `;
+        }
+
+        async function testAPI() {
+            console.log('Testing API health...');
+            const result = await makeRequest(`${API_BASE}/health`);
+            displayResult('apiResult', result);
+        }
+
+        async function loadLLMModels() {
+            console.log('Loading LLM models...');
+            const result = await makeRequest(`${API_BASE}/llm`);
+            displayResult('apiResult', result);
+        }
+
+        async function loadAgents() {
+            console.log('Loading agents...');
+            const result = await makeRequest(`${API_BASE}/agents`);
+            displayResult('apiResult', result);
+        }
+
+        async function loadChats() {
+            console.log('Loading chats...');
+            const result = await makeRequest(`${API_BASE}/chats`);
+            displayResult('apiResult', result);
+        }
+
+        async function sendTestMessage() {
+            const messageInput = document.getElementById('chatMessage');
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                displayResult('chatResult', { error: 'Please enter a message' }, false);
+                return;
+            }
+
+            console.log('Sending test message...');
+            
+            // Сначала получим первый чат
+            const chatsResult = await makeRequest(`${API_BASE}/chats`);
+            
+            if (!chatsResult.ok || !chatsResult.data || chatsResult.data.length === 0) {
+                displayResult('chatResult', { error: 'No chats found. Create a chat first.' }, false);
+                return;
+            }
+
+            const chatId = chatsResult.data[0].id;
+            
+            // Отправим сообщение
+            const result = await makeRequest(`${API_BASE}/chats/${chatId}/messages`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    content: message
+                })
+            });
+            
+            displayResult('chatResult', result);
+            messageInput.value = '';
+        }
+
+        function testWebSocket() {
+            try {
+                socket = new WebSocket('ws://localhost:3000');
+                
+                socket.onopen = function(event) {
+                    displayResult('wsResult', { message: 'WebSocket connected successfully!' }, true);
+                };
+                
+                socket.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    displayResult('wsResult', { message: 'Received:', data }, true);
+                };
+                
+                socket.onerror = function(error) {
+                    displayResult('wsResult', { error: 'WebSocket error: ' + error }, false);
+                };
+                
+                socket.onclose = function(event) {
+                    displayResult('wsResult', { message: 'WebSocket disconnected' }, false);
+                };
+            } catch (error) {
+                displayResult('wsResult', { error: error.message }, false);
+            }
+        }
+
+        function disconnectWebSocket() {
+            if (socket) {
+                socket.close();
+                socket = null;
+                displayResult('wsResult', { message: 'WebSocket disconnected manually' }, true);
+            }
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                displayResult('uploadResult', { error: 'Please select a file' }, false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                displayResult('uploadResult', { status: response.status, data: result });
+            } catch (error) {
+                displayResult('uploadResult', { error: error.message }, false);
+            }
+        }
+
+        // Auto-test on load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 LLM Agent Frontend Test loaded');
+            testAPI();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+/* Custom CSS Variables for Dark Theme */
+:root {
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --surface-variant: #2a2a2a;
+  --border-color: #333;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --primary-color: #2196f3;
+  --primary-variant: #1976d2;
+  --accent-color: #ff4081;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --success-color: #4caf50;
+  --hover-color: #2a2a2a;
+  --selected-color: #1976d2;
+}
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+/* Angular Material Theme Overrides */
+.mat-mdc-card {
+  background: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mat-mdc-card-title {
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--text-secondary) !important;
+}
+
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: var(--surface-variant);
+  --mdc-filled-text-field-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-input-text-color: var(--text-primary);
+  --mdc-outlined-text-field-outline-color: var(--border-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-label-text-color: var(--text-secondary);
+  --mdc-outlined-text-field-input-text-color: var(--text-primary);
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--surface-variant);
+}
+
+.mat-mdc-button {
+  --mdc-text-button-label-text-color: var(--text-primary);
+}
+
+.mat-mdc-raised-button {
+  --mdc-filled-button-container-color: var(--primary-color);
+  --mdc-filled-button-label-text-color: white;
+}
+
+.mat-mdc-icon-button {
+  --mdc-icon-button-icon-color: var(--text-secondary);
+}
+
+.mat-mdc-icon-button:hover {
+  --mdc-icon-button-icon-color: var(--text-primary);
+}
+
+.mat-mdc-fab {
+  --mdc-fab-container-color: var(--primary-color);
+  --mdc-fab-icon-color: white;
+}
+
+.mat-mdc-tab-group {
+  --mdc-tab-indicator-active-indicator-color: var(--primary-color);
+  --mat-tab-header-divider-color: var(--border-color);
+  background-color: var(--surface-color);
+}
+
+.mat-mdc-tab {
+  --mdc-secondary-navigation-tab-label-text-color: var(--text-secondary);
+}
+
+.mat-mdc-tab.mdc-tab--active {
+  --mdc-secondary-navigation-tab-label-text-color: var(--primary-color);
+}
+
+.mat-mdc-tab-body-content {
+  background-color: var(--background-color);
+}
+
+.mat-mdc-chip {
+  --mdc-chip-elevated-container-color: var(--surface-variant);
+  --mdc-chip-label-text-color: var(--text-primary);
+}
+
+.mat-mdc-chip.mat-primary {
+  --mdc-chip-elevated-container-color: var(--primary-color);
+  --mdc-chip-label-text-color: white;
+}
+
+.mat-mdc-chip.mat-accent {
+  --mdc-chip-elevated-container-color: var(--accent-color);
+  --mdc-chip-label-text-color: white;
+}
+
+.mdc-dialog .mdc-dialog__surface {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--surface-color);
+  --mdc-snackbar-supporting-text-color: var(--text-primary);
+}
+
+.success-snackbar {
+  --mdc-snackbar-container-color: var(--success-color) !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: var(--error-color) !important;
+  --mdc-snackbar-supporting-text-color: white !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Utility Classes */
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.bg-surface {
+  background-color: var(--surface-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.border-color {
+  border-color: var(--border-color) !important;
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .models-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .input-wrapper {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .sidebar {
+    width: 250px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 200px !important;
+  }
+  
+  .chat-header {
+    padding: 12px 16px !important;
+  }
+  
+  .message-input-container {
+    padding: 12px 16px !important;
+  }
+}

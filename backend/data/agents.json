@@ -1,0 +1,12 @@
+[
+  {
+    "id": "fe8fd7c2-eeb1-4bd6-a534-520a263ad2ac",
+    "name": "Default Assistant",
+    "description": "Default AI assistant",
+    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful in your responses.",
+    "llmConfigId": "8f38c141-4fc5-489c-8d11-fbac0634c760",
+    "mcpServerIds": [],
+    "createdAt": "2025-06-08T16:59:25.684Z",
+    "updatedAt": "2025-06-08T17:01:41.782Z"
+  }
+]

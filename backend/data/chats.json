@@ -1,0 +1,25 @@
+[
+  {
+    "id": "a456a901-8b7a-49b2-8d59-ef1b51ff844b",
+    "name": "Test Chat",
+    "agentId": "fe8fd7c2-eeb1-4bd6-a534-520a263ad2ac",
+    "messages": [
+      {
+        "id": "9a6256ee-9e7e-412c-b72c-1e23ecc00f1e",
+        "role": "user",
+        "content": "Hello! This is a test message.",
+        "images": [],
+        "timestamp": "2025-06-08T17:01:41.806Z"
+      },
+      {
+        "id": "fb0431e1-5ab1-4749-b02d-c314e01f9777",
+        "role": "assistant",
+        "content": "Got it! I'll keep my responses concise and helpful. Let me know how I can assist you today!",
+        "images": [],
+        "timestamp": "2025-06-08T17:01:43.096Z"
+      }
+    ],
+    "createdAt": "2025-06-08T17:01:41.794Z",
+    "updatedAt": "2025-06-08T17:01:43.096Z"
+  }
+]
