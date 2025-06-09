@@ -29,5 +29,13 @@
     "messages": [],
     "createdAt": "2025-06-09T14:07:19.635Z",
     "updatedAt": "2025-06-09T14:07:19.635Z"
+  },
+  {
+    "id": "facf212d-9ce5-4d2c-9905-c4438a14990e",
+    "name": "папап",
+    "agentId": "fe8fd7c2-eeb1-4bd6-a534-520a263ad2ac",
+    "messages": [],
+    "createdAt": "2025-06-09T14:44:21.964Z",
+    "updatedAt": "2025-06-09T14:44:21.964Z"
   }
 ]

@@ -6,12 +6,14 @@ import { Router } from '@angular/router';
 
 interface Chat {
   id: string;
-  title: string;
+  name: string; // Changed from title to name to match backend
+  agentId?: string;
+  llmModelId?: string;
+  messages: any[];
   createdAt: Date;
   updatedAt: Date;
   messageCount?: number;
   lastMessage?: string;
-  llmModelId?: string;
   mcpServers: string[];
 }
 
@@ -46,8 +48,8 @@ interface Agent {
         <h3>Create New Chat</h3>
         
         <div class="form-group">
-          <label class="form-label">Chat Title:</label>
-          <input type="text" [(ngModel)]="newChat.title" placeholder="Enter chat title" class="form-input">
+          <label class="form-label">Chat Name:</label>
+          <input type="text" [(ngModel)]="newChat.name" placeholder="Enter chat name" class="form-input">
         </div>
 
         <div class="form-group">
@@ -124,7 +126,7 @@ interface Agent {
 
         <div *ngFor="let chat of chats" class="chat-card" (click)="openChat(chat.id)">
           <div class="chat-info">
-            <h4 class="chat-title">{{ chat.title }}</h4>
+            <h4 class="chat-title">{{ chat.name }}</h4>
             <p class="chat-meta">
               <span class="chat-date">{{ formatDate(chat.updatedAt) }}</span>
               <span class="chat-count" *ngIf="chat.messageCount">{{ chat.messageCount }} messages</span>
@@ -410,7 +412,7 @@ export class ChatsListComponent implements OnInit {
   selectionMode: 'agent' | 'llm' = 'agent';
 
   newChat = {
-    title: '',
+    name: '', // Changed from title to name
     agentId: '',
     llmModelId: ''
   };
@@ -428,9 +430,15 @@ export class ChatsListComponent implements OnInit {
 
   loadChats() {
     this.loading = true;
-    this.http.get<{success: boolean, data: Chat[]}>('/api/chats').subscribe({
-      next: (response) => {
-        this.chats = response.data || [];
+    this.http.get<Chat[]>('/api/chats').subscribe({
+      next: (chats) => {
+        this.chats = chats.map(chat => ({
+          ...chat,
+          messageCount: chat.messages?.length || 0,
+          lastMessage: chat.messages?.length > 0 
+            ? chat.messages[chat.messages.length - 1].content 
+            : undefined
+        }));
         this.loading = false;
       },
       error: (error) => {
@@ -464,7 +472,7 @@ export class ChatsListComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return !!(this.newChat.title && 
+    return !!(this.newChat.name && 
              (this.selectionMode === 'agent' ? this.newChat.agentId : this.newChat.llmModelId));
   }
 
@@ -472,20 +480,18 @@ export class ChatsListComponent implements OnInit {
     if (!this.isFormValid()) return;
 
     const chatData = {
-      title: this.newChat.title,
+      name: this.newChat.name, // Changed from title to name
       agentId: this.selectionMode === 'agent' ? this.newChat.agentId : undefined,
       llmModelId: this.selectionMode === 'llm' ? this.newChat.llmModelId : undefined
     };
 
-    this.http.post<{success: boolean, data: Chat}>('/api/chats', chatData).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.statusMessage = 'Chat created successfully!';
-          this.cancelCreate();
-          this.loadChats();
-          // Navigate to the new chat
-          this.router.navigate(['/chat', response.data.id]);
-        }
+    this.http.post<Chat>('/api/chats', chatData).subscribe({
+      next: (chat) => {
+        this.statusMessage = 'Chat created successfully!';
+        this.cancelCreate();
+        this.loadChats();
+        // Navigate to the new chat
+        this.router.navigate(['/chat', chat.id]);
       },
       error: (error) => {
         console.error('Error creating chat:', error);
@@ -497,7 +503,7 @@ export class ChatsListComponent implements OnInit {
   cancelCreate() {
     this.showCreateForm = false;
     this.newChat = {
-      title: '',
+      name: '', // Changed from title to name
       agentId: '',
       llmModelId: ''
     };
@@ -513,10 +519,8 @@ export class ChatsListComponent implements OnInit {
 
     this.http.delete<{success: boolean}>(`/api/chats/${chatId}`).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.statusMessage = 'Chat deleted successfully!';
-          this.loadChats();
-        }
+        this.statusMessage = 'Chat deleted successfully!';
+        this.loadChats();
       },
       error: (error) => {
         console.error('Error deleting chat:', error);
