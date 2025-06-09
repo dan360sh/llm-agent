@@ -38,6 +38,7 @@ class App {
 
   constructor() {
     this.app = express();
+    this.app.use(cors())
     this.server = createServer(this.app);
     this.io = new Server(this.server, {
       cors: {

@@ -17,10 +17,31 @@
         "content": "Got it! I'll keep my responses concise and helpful. Let me know how I can assist you today!",
         "images": [],
         "timestamp": "2025-06-08T17:01:43.096Z"
+      },
+      {
+        "id": "ebf4acd0-d2f7-4a8e-9513-19efa454a089",
+        "role": "user",
+        "content": "Привет! Расскажи о володе",
+        "images": [],
+        "timestamp": "2025-06-09T16:55:12.719Z"
+      },
+      {
+        "id": "0df719a3-54c5-4f94-8efc-60a18e61a8e0",
+        "role": "user",
+        "content": "Привет! Расскажи о володе",
+        "images": [],
+        "timestamp": "2025-06-09T16:55:23.540Z"
+      },
+      {
+        "id": "d7eca193-2059-4b46-870f-155966c05938",
+        "role": "user",
+        "content": "Привет! Расскажи о володе",
+        "images": [],
+        "timestamp": "2025-06-09T16:55:29.890Z"
       }
     ],
     "createdAt": "2025-06-08T17:01:41.794Z",
-    "updatedAt": "2025-06-08T17:01:43.096Z"
+    "updatedAt": "2025-06-09T16:55:29.890Z"
   },
   {
     "id": "54de2e9e-d529-4b95-b99a-fe7c63d8934d",
