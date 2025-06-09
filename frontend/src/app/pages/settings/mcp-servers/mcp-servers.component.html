@@ -1,0 +1,119 @@
+<div class="mcp-servers-container">
+  <div class="header">
+    <h2>MCP Servers</h2>
+    <button class="create-btn" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancel' : 'Add MCP Server' }}
+    </button>
+  </div>
+
+  <!-- Create MCP Server Form -->
+  <div class="create-form" *ngIf="showCreateForm">
+    <div class="form-card">
+      <h3>Add New MCP Server</h3>
+      
+      <div class="form-group">
+        <label>Server Name:</label>
+        <input type="text" [(ngModel)]="newServer.name" placeholder="Server name">
+      </div>
+      
+      <div class="form-group">
+        <label>Command:</label>
+        <input type="text" [(ngModel)]="newServer.command" placeholder="Command (e.g., npx, node)">
+      </div>
+      
+      <div class="form-group">
+        <label>Arguments:</label>
+        <div class="args-container">
+          <div *ngFor="let arg of (newServer.args || []); let i = index" class="arg-item">
+            <input type="text" 
+                   [(ngModel)]="newServer.args![i]" 
+                   placeholder="Argument {{ i + 1 }}">
+            <button type="button" 
+                    class="remove-arg-btn" 
+                    (click)="removeArgument(i)">×</button>
+          </div>
+          <button type="button" 
+                  class="add-arg-btn" 
+                  (click)="addArgument()">Add Argument</button>
+        </div>
+      </div>
+
+      <div class="config-preview">
+        <h4>Configuration Preview:</h4>
+        <pre>{{getConfigPreview()}}</pre>
+      </div>
+      
+      <div class="form-actions">
+        <button class="cancel-btn" (click)="resetForm()">Cancel</button>
+        <button class="submit-btn" 
+                (click)="createServer()"
+                [disabled]="!isValidServer()">
+          Add Server
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Servers List -->
+  <div class="servers-list">
+    <div *ngIf="servers.length === 0" class="no-servers">
+      <h3>No MCP servers configured</h3>
+      <p>Add your first MCP server to get started!</p>
+    </div>
+
+    <div *ngIf="servers.length > 0" class="servers-grid">
+      <div *ngFor="let server of servers" class="server-card">
+        <div class="server-header">
+          <div class="server-info">
+            <h3>{{ server.name }}</h3>
+            <span class="status-badge" [class]="'status-' + server.status">
+              {{ server.status | titlecase }}
+            </span>
+          </div>
+          <div class="server-actions">
+            <button class="toggle-btn" 
+                    [class]="server.enabled ? 'enabled' : 'disabled'"
+                    (click)="toggleServer(server)">
+              {{ server.enabled ? 'Disable' : 'Enable' }}
+            </button>
+            <button class="delete-btn" (click)="deleteServer(server)">Delete</button>
+          </div>
+        </div>
+
+        <div class="server-details">
+          <div class="detail-item">
+            <strong>Command:</strong> {{ server.command }}
+          </div>
+          
+          <div class="detail-item">
+            <strong>Arguments:</strong>
+            <div class="args-list">
+              <span *ngFor="let arg of server.args" class="arg-tag">{{ arg }}</span>
+            </div>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Status:</strong>
+            <span [class]="'status-text-' + server.status">
+              {{ server.status | titlecase }}
+            </span>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Enabled:</strong>
+            <span [class]="server.enabled ? 'status-yes' : 'status-no'">
+              {{ server.enabled ? 'Yes' : 'No' }}
+            </span>
+          </div>
+
+          <div class="detail-item">
+            <strong>Full Command:</strong>
+            <div class="full-command">
+              {{ server.command }} {{ server.args.join(' ') }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

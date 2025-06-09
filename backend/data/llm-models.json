@@ -51,5 +51,89 @@
     "supportsImages": true,
     "enabled": true,
     "createdAt": "2025-06-08T17:57:41.876Z"
+  },
+  {
+    "id": "41dbe594-d3e8-40a1-a450-946334c06290",
+    "name": "name1",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3001
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T09:48:41.149Z"
+  },
+  {
+    "id": "9f0fbf5d-7c12-48ca-acfd-cd5cbc5bf1f7",
+    "name": "name1",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3001
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T09:49:38.017Z"
+  },
+  {
+    "id": "a5839388-f6ad-4c1b-951f-7c3ff8958af2",
+    "name": "name1",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3001
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T09:49:48.186Z"
+  },
+  {
+    "id": "6013e798-359e-4d90-884c-eeb9c2511b71",
+    "name": "name1",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3001
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T09:50:17.695Z"
+  },
+  {
+    "id": "e048f537-12b3-4088-953e-4762bd9083d2",
+    "name": "name1",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3001
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T09:50:18.685Z"
+  },
+  {
+    "id": "738b8941-13b7-40ea-a0db-514033fa49b2",
+    "name": "XXXX",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "llava:7b",
+      "temperature": 0.7,
+      "maxTokens": 3000
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-09T13:19:10.150Z"
   }
 ]

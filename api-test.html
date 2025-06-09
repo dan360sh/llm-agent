@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Agent API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #1976d2;
+        }
+        .result {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Agent API Test</h1>
+        <p>Test the backend API endpoints running on http://localhost:3000</p>
+    </div>
+
+    <div class="container section">
+        <h2>LLM Models</h2>
+        <button class="button" onclick="testAPI('/api/llm', 'llm-result')">Get LLM Models</button>
+        <div id="llm-result" class="result"></div>
+    </div>
+
+    <div class="container section">
+        <h2>Agents</h2>
+        <button class="button" onclick="testAPI('/api/agents', 'agents-result')">Get Agents</button>
+        <div id="agents-result" class="result"></div>
+    </div>
+
+    <div class="container section">
+        <h2>MCP Servers</h2>
+        <button class="button" onclick="testAPI('/api/mcp', 'mcp-result')">Get MCP Servers</button>
+        <div id="mcp-result" class="result"></div>
+    </div>
+
+    <div class="container section">
+        <h2>Chats</h2>
+        <button class="button" onclick="testAPI('/api/chats', 'chats-result')">Get Chats</button>
+        <div id="chats-result" class="result"></div>
+    </div>
+
+    <div class="container section">
+        <h2>Create Test Chat</h2>
+        <button class="button" onclick="createTestChat()">Create Test Chat</button>
+        <div id="create-chat-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testAPI(endpoint, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(`http://localhost:3000${endpoint}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `Error: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Network Error: ${error.message}`;
+            }
+        }
+
+        async function createTestChat() {
+            const resultDiv = document.getElementById('create-chat-result');
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading...';
+
+            try {
+                // First get agents to use one for creating chat
+                const agentsResponse = await fetch('http://localhost:3000/api/agents');
+                const agentsData = await agentsResponse.json();
+                
+                if (!agentsData.success || agentsData.data.length === 0) {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = 'No agents available to create chat with';
+                    return;
+                }
+
+                const firstAgent = agentsData.data[0];
+                
+                // Create chat with first agent
+                const response = await fetch('http://localhost:3000/api/chats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        agentId: firstAgent.id,
+                        name: `Test Chat - ${new Date().toLocaleTimeString()}`
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `Chat created successfully!\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `Error: ${response.status}\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Network Error: ${error.message}`;
+            }
+        }
+
+        // Test connection on page load
+        window.onload = () => {
+            testAPI('/api/llm', 'llm-result');
+        };
+    </script>
+</body>
+</html>

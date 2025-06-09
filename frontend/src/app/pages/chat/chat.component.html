@@ -1,0 +1,66 @@
+<div class="chat-container" *ngIf="currentChat$ | async as chat; else noChat">
+  <!-- Chat Header -->
+  <div class="chat-header">
+    <h2>{{ chat.name }}</h2>
+    <p>Agent: {{ getAgentName(chat.agentId) }}</p>
+    
+    <div class="chat-controls">
+      <div class="control-group">
+        <label>LLM Model:</label>
+        <select [value]="getCurrentLLMModel(chat)" 
+                (change)="onLLMModelChange(chat, $any($event.target).value)">
+          <option *ngFor="let model of llmModels" [value]="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="messages-container">
+    <div class="message" 
+         *ngFor="let message of chat.messages"
+         [ngClass]="{'user-message': message.role === 'user', 'assistant-message': message.role === 'assistant'}">
+      
+      <div class="message-content">
+        <div class="message-role">{{ message.role === 'user' ? 'You' : 'Assistant' }}</div>
+        <div class="message-text">{{ message.content }}</div>
+        <div class="message-timestamp">
+          {{ message.timestamp | date:'short' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Generation indicator -->
+    <div class="generation-indicator" *ngIf="isGenerating$ | async">
+      <span>Assistant is typing...</span>
+      <button (click)="stopGeneration()">Stop</button>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-row">
+      <textarea 
+        [(ngModel)]="messageText"
+        placeholder="Type your message..."
+        (keydown.enter)="onEnterKey($event)"
+        [disabled]="(isGenerating$ | async) || false"
+        rows="3"></textarea>
+      
+      <button 
+        (click)="sendMessage()"
+        [disabled]="!messageText.trim() || ((isGenerating$ | async) || false)">
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noChat>
+  <div class="no-chat">
+    <h2>No Chat Selected</h2>
+    <p>Select a chat from the sidebar or create a new one to start chatting.</p>
+  </div>
+</ng-template>

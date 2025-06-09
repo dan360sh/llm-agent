@@ -1,0 +1,111 @@
+<div class="agents-container">
+  <div class="header">
+    <h2>Agents</h2>
+    <button class="create-btn" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancel' : 'Create Agent' }}
+    </button>
+  </div>
+
+  <!-- Create Agent Form -->
+  <div class="create-form" *ngIf="showCreateForm">
+    <div class="form-card">
+      <h3>Create New Agent</h3>
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="newAgent.name" placeholder="Agent name">
+      </div>
+      
+      <div class="form-group">
+        <label>Description:</label>
+        <input type="text" [(ngModel)]="newAgent.description" placeholder="Agent description (optional)">
+      </div>
+      
+      <div class="form-group">
+        <label>System Prompt:</label>
+        <textarea [(ngModel)]="newAgent.systemPrompt" 
+                  placeholder="System prompt for the agent"
+                  rows="4"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>LLM Model:</label>
+        <select [(ngModel)]="newAgent.llmConfigId">
+          <option value="">Select LLM Model</option>
+          <option *ngFor="let model of llmModels" [value]="model.id">
+            {{ model.name }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>MCP Servers:</label>
+        <div class="mcp-checkboxes">
+          <div *ngFor="let server of mcpServers" class="checkbox-item">
+            <input type="checkbox" 
+                   [id]="'mcp-' + server.id"
+                   [checked]="(newAgent.mcpServerIds || []).includes(server.id)"
+                   (change)="toggleMCPServer(server.id, $event)">
+            <label [for]="'mcp-' + server.id">{{ server.name }}</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button class="cancel-btn" (click)="resetForm()">Cancel</button>
+        <button class="submit-btn" 
+                (click)="createAgent()"
+                [disabled]="!isValidAgent()">
+          Create Agent
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agents List -->
+  <div class="agents-list">
+    <div *ngIf="agents.length === 0" class="no-agents">
+      <h3>No agents yet</h3>
+      <p>Create your first agent to get started!</p>
+    </div>
+
+    <div *ngIf="agents.length > 0" class="agents-grid">
+      <div *ngFor="let agent of agents" class="agent-card">
+        <div class="agent-header">
+          <div class="agent-info">
+            <h3>{{ agent.name }}</h3>
+            <p *ngIf="agent.description">{{ agent.description }}</p>
+          </div>
+          <div class="agent-actions">
+            <button class="edit-btn" (click)="editAgent(agent)">Edit</button>
+            <button class="delete-btn" (click)="deleteAgent(agent)">Delete</button>
+          </div>
+        </div>
+
+        <div class="agent-details">
+          <div class="detail-item">
+            <strong>LLM Model:</strong> {{ getLLMModelName(agent.llmConfigId) }}
+          </div>
+          
+          <div class="detail-item">
+            <strong>MCP Servers:</strong>
+            <span *ngIf="agent.mcpServerIds.length === 0">None</span>
+            <div *ngIf="agent.mcpServerIds.length > 0" class="mcp-tags">
+              <span *ngFor="let serverId of agent.mcpServerIds" class="mcp-tag">
+                {{ getMCPServerName(serverId) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="detail-item">
+            <strong>System Prompt:</strong>
+            <div class="system-prompt">{{ agent.systemPrompt }}</div>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Created:</strong> {{ agent.createdAt | date:'medium' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

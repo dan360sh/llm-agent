@@ -1,0 +1,71 @@
+<div class="chats-list-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>Chats</mat-card-title>
+      <div class="spacer"></div>
+      <button mat-fab color="primary" (click)="openCreateChatDialog()" matTooltip="Create new chat">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-card-header>
+  </mat-card>
+
+  <div class="chats-container">
+    <div *ngIf="(chats$ | async) as chats">
+      <div *ngIf="chats.length === 0" class="no-chats">
+        <mat-card>
+          <mat-card-content>
+            <div class="no-chats-content">
+              <mat-icon class="no-chats-icon">chat_bubble_outline</mat-icon>
+              <h3>No chats yet</h3>
+              <p>Create your first chat to get started!</p>
+              <button mat-raised-button color="primary" (click)="openCreateChatDialog()">
+                <mat-icon>add</mat-icon>
+                Create Chat
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div *ngIf="chats.length > 0" class="chats-grid">
+        <mat-card 
+          *ngFor="let chat of chats" 
+          class="chat-card"
+          (click)="openChat(chat)"
+          [class.has-context-menu]="true">
+          
+          <mat-card-header>
+            <mat-card-title>{{ chat.name }}</mat-card-title>
+            <mat-card-subtitle>{{ getAgentName(chat.agentId) }}</mat-card-subtitle>
+            
+            <button mat-icon-button 
+                    [matMenuTriggerFor]="contextMenu"
+                    (click)="$event.stopPropagation()"
+                    class="context-menu-button">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            
+            <mat-menu #contextMenu="matMenu">
+              <button mat-menu-item (click)="deleteChat($event, chat)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete Chat</span>
+              </button>
+            </mat-menu>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="chat-preview">
+              <p class="last-message">{{ getLastMessagePreview(chat) }}</p>
+              <div class="chat-info">
+                <span class="message-count">{{ chat.messages.length }} messages</span>
+                <span class="last-updated" *ngIf="getLastMessageTime(chat) as lastTime">
+                  {{ lastTime | date:'short' }}
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="llm-models-container">
+  <div class="header">
+    <h2>LLM Models</h2>
+    <button class="create-btn" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancel' : 'Add LLM Model' }}
+    </button>
+  </div>
+
+  <!-- Create LLM Model Form -->
+  <div class="create-form" *ngIf="showCreateForm">
+    <div class="form-card">
+      <h3>Add New LLM Model</h3>
+      
+      <div class="form-group">
+        <label>Model Name:</label>
+        <input type="text" [(ngModel)]="newModel.name" placeholder="Model name">
+      </div>
+      
+      <div class="form-group">
+        <label>Provider:</label>
+        <select [(ngModel)]="newModel.provider" (change)="onProviderChange()">
+          <option value="">Select Provider</option>
+          <option value="openai">OpenAI Compatible</option>
+          <option value="ollama">Ollama</option>
+        </select>
+      </div>
+
+      <!-- OpenAI Configuration -->
+      <div *ngIf="newModel.provider === 'openai'" class="provider-config">
+        <h4>OpenAI Configuration</h4>
+        
+        <div class="form-group">
+          <label>API Key:</label>
+          <input type="password" [(ngModel)]="openaiConfig.apiKey" placeholder="Your API key">
+        </div>
+        
+        <div class="form-group">
+          <label>Base URL:</label>
+          <input type="text" [(ngModel)]="openaiConfig.baseURL" placeholder="https://api.openai.com/v1">
+        </div>
+        
+        <div class="form-group">
+          <label>Model:</label>
+          <input type="text" [(ngModel)]="openaiConfig.model" placeholder="gpt-4">
+        </div>
+        
+        <div class="form-group">
+          <label>Max Tokens (optional):</label>
+          <input type="number" [(ngModel)]="openaiConfig.maxTokens" placeholder="3000">
+        </div>
+        
+        <div class="form-group">
+          <label>Temperature (optional):</label>
+          <input type="number" 
+                 step="0.1" 
+                 min="0" 
+                 max="2" 
+                 [(ngModel)]="openaiConfig.temperature" 
+                 placeholder="0.7">
+        </div>
+      </div>
+
+      <!-- Ollama Configuration -->
+      <div *ngIf="newModel.provider === 'ollama'" class="provider-config">
+        <h4>Ollama Configuration</h4>
+        
+        <div class="form-group">
+          <label>Base URL:</label>
+          <input type="text" [(ngModel)]="ollamaConfig.baseURL" placeholder="http://localhost:11434">
+        </div>
+        
+        <div class="form-group">
+          <label>Model:</label>
+          <input type="text" [(ngModel)]="ollamaConfig.model" placeholder="llama2">
+        </div>
+        
+        <div class="form-group">
+          <label>Temperature (optional):</label>
+          <input type="number" 
+                 step="0.1" 
+                 min="0" 
+                 max="2" 
+                 [(ngModel)]="ollamaConfig.temperature" 
+                 placeholder="0.7">
+        </div>
+        
+        <div class="form-group">
+          <label>Max Tokens (optional):</label>
+          <input type="number" [(ngModel)]="ollamaConfig.maxTokens" placeholder="3000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="newModel.supportsImages">
+          Supports Images
+        </label>
+      </div>
+      
+      <div class="form-actions">
+        <button class="cancel-btn" (click)="resetForm()">Cancel</button>
+        <button class="submit-btn" 
+                (click)="createModel()"
+                [disabled]="!isValidModel()">
+          Add Model
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Models List -->
+  <div class="models-list">
+    <div *ngIf="models.length === 0" class="no-models">
+      <h3>No LLM models configured</h3>
+      <p>Add your first LLM model to get started!</p>
+    </div>
+
+    <div *ngIf="models.length > 0" class="models-grid">
+      <div *ngFor="let model of models" class="model-card">
+        <div class="model-header">
+          <div class="model-info">
+            <h3>{{ model.name }}</h3>
+            <span class="provider-badge" [class]="'provider-' + model.provider">
+              {{ model.provider | titlecase }}
+            </span>
+          </div>
+          <div class="model-actions">
+            <button class="test-btn" (click)="testConnection(model)">Test</button>
+            <button class="delete-btn" (click)="deleteModel(model)">Delete</button>
+          </div>
+        </div>
+
+        <div class="model-details">
+          <div class="detail-item">
+            <strong>Model:</strong> {{ getModelName(model) }}
+          </div>
+          
+          <div class="detail-item">
+            <strong>Base URL:</strong> {{ getBaseURL(model) }}
+          </div>
+          
+          <div class="detail-item">
+            <strong>Supports Images:</strong>
+            <span [class]="model.supportsImages ? 'status-yes' : 'status-no'">
+              {{ model.supportsImages ? 'Yes' : 'No' }}
+            </span>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Status:</strong>
+            <span [class]="model.enabled ? 'status-enabled' : 'status-disabled'">
+              {{ model.enabled ? 'Enabled' : 'Disabled' }}
+            </span>
+          </div>
+          
+          <div class="detail-item">
+            <strong>Created:</strong> {{ model.createdAt | date:'medium' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

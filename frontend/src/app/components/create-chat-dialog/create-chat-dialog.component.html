@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Create New Chat</h2>
+
+<mat-dialog-content>
+  <div class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Chat Name (optional)</mat-label>
+      <input matInput 
+             [(ngModel)]="chatName" 
+             placeholder="Enter chat name or leave empty for auto-generated name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Select Agent</mat-label>
+      <mat-select [(ngModel)]="selectedAgentId" required>
+        <mat-option *ngFor="let agent of data.agents" [value]="agent.id">
+          {{ agent.name }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Choose the agent for this chat</mat-hint>
+    </mat-form-field>
+
+    <div *ngIf="selectedAgentId" class="agent-info">
+      <h4>Agent Details:</h4>
+      <div class="agent-details">
+        <p><strong>System Prompt:</strong></p>
+        <div class="system-prompt">
+          {{ (data.agents.find(a => a.id === selectedAgentId))?.systemPrompt }}
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button 
+          color="primary" 
+          (click)="onCreate()"
+          [disabled]="!isValid()">
+    Create Chat
+  </button>
+</mat-dialog-actions>
