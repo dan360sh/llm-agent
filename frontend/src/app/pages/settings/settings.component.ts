@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { LLMModelsComponent } from './llm-models/llm-models.component';
 import { MCPServersComponent } from './mcp-servers/mcp-servers.component';
 import { AgentsComponent } from './agents/agents.component';
@@ -10,9 +9,6 @@ import { AgentsComponent } from './agents/agents.component';
   standalone: true,
   imports: [
     CommonModule, 
-    RouterOutlet, 
-    RouterLink, 
-    RouterLinkActive, 
     LLMModelsComponent,
     MCPServersComponent,
     AgentsComponent

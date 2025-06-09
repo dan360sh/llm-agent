@@ -21,5 +21,13 @@
     ],
     "createdAt": "2025-06-08T17:01:41.794Z",
     "updatedAt": "2025-06-08T17:01:43.096Z"
+  },
+  {
+    "id": "54de2e9e-d529-4b95-b99a-fe7c63d8934d",
+    "name": "Chat with Default Assistant",
+    "agentId": "fe8fd7c2-eeb1-4bd6-a534-520a263ad2ac",
+    "messages": [],
+    "createdAt": "2025-06-09T14:07:19.635Z",
+    "updatedAt": "2025-06-09T14:07:19.635Z"
   }
 ]
