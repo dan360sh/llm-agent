@@ -137,50 +137,6 @@ class App {
     this.app.use('/api/mcp', this.mcpController.getRouter());
 
     // Upload endpoint
-    /**
-     * @swagger
-     * /api/upload:
-     *   post:
-     *     summary: Загрузить изображение
-     *     tags: [Upload]
-     *     requestBody:
-     *       required: true
-     *       content:
-     *         multipart/form-data:
-     *           schema:
-     *             type: object
-     *             properties:
-     *               image:
-     *                 type: string
-     *                 format: binary
-     *                 description: Файл изображения (максимум 10MB)
-     *     responses:
-     *       200:
-     *         description: Файл успешно загружен
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 success:
-     *                   type: boolean
-     *                   example: true
-     *                 filename:
-     *                   type: string
-     *                   example: "image-1234567890.jpg"
-     *                 url:
-     *                   type: string
-     *                   example: "/uploads/image-1234567890.jpg"
-     *                 path:
-     *                   type: string
-     *                   example: "/uploads/image-1234567890.jpg"
-     *       400:
-     *         description: Нет файла или неподдерживаемый формат
-     *         content:
-     *           application/json:
-     *             schema:
-     *               $ref: '#/components/schemas/Error'
-     */
     this.app.post('/api/upload', (req, res) => {
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -196,31 +152,6 @@ class App {
     });
 
     // Health check
-    /**
-     * @swagger
-     * /api/health:
-     *   get:
-     *     summary: Проверка состояния API
-     *     tags: [Health]
-     *     responses:
-     *       200:
-     *         description: API работает нормально
-     *         content:
-     *           application/json:
-     *             schema:
-     *               type: object
-     *               properties:
-     *                 status:
-     *                   type: string
-     *                   example: "ok"
-     *                 timestamp:
-     *                   type: string
-     *                   format: date-time
-     *                   example: "2025-06-08T17:00:00.000Z"
-     *                 version:
-     *                   type: string
-     *                   example: "1.0.0"
-     */
     this.app.get('/api/health', (req, res) => {
       res.json({ 
         status: 'ok', 
@@ -256,6 +187,89 @@ class App {
       socket.on('leave-chat', (chatId: string) => {
         socket.leave(chatId);
         console.log(`Client ${socket.id} left chat ${chatId}`);
+      });
+
+      socket.on('send-message', async (data: { chatId: string, content: string, images?: string[] }) => {
+        console.log('WebSocket message received:', data);
+        
+        try {
+          const { chatId, content, images } = data;
+          
+          // Проверяем что чат существует
+          const chat = this.chatService.getChat(chatId);
+          if (!chat) {
+            socket.emit('generation-error', {
+              chatId,
+              error: 'Chat not found'
+            });
+            return;
+          }
+
+          // Отправляем уведомление о начале генерации
+          this.io.to(chatId).emit('generation-start', {
+            chatId,
+            messageId: Date.now().toString()
+          });
+
+          let streamingMessageId: string | null = null;
+          
+          // Callback для потокового ответа
+          const onStream = (chunk: string) => {
+            this.io.to(chatId).emit('stream-response', {
+              type: 'content',
+              content: chunk,
+              chatId,
+              messageId: streamingMessageId
+            });
+          };
+
+          // Отправляем сообщение и получаем ответ
+          const assistantMessage = await this.chatService.sendMessage(
+            chatId, 
+            content, 
+            images,
+            onStream
+          );
+
+          streamingMessageId = assistantMessage.id;
+
+          // Отправляем финальное уведомление о завершении
+          this.io.to(chatId).emit('stream-response', {
+            type: 'done',
+            chatId,
+            messageId: assistantMessage.id
+          });
+
+          this.io.to(chatId).emit('generation-complete', {
+            chatId,
+            messageId: assistantMessage.id
+          });
+
+        } catch (error) {
+          console.error('Error in WebSocket message handling:', error);
+          
+          socket.emit('stream-response', {
+            type: 'error',
+            error: error instanceof Error ? error.message : 'Unknown error',
+            chatId: data.chatId
+          });
+
+          socket.emit('generation-error', {
+            chatId: data.chatId,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      });
+
+      socket.on('stop-generation', (data: { chatId: string }) => {
+        console.log('Stop generation requested for chat:', data.chatId);
+        
+        // TODO: Реализовать остановку генерации
+        // Сейчас просто отправим уведомление о завершении
+        this.io.to(data.chatId).emit('generation-complete', {
+          chatId: data.chatId,
+          messageId: Date.now().toString()
+        });
       });
 
       socket.on('disconnect', () => {

@@ -38,10 +38,52 @@
         "content": "Привет! Расскажи о володе",
         "images": [],
         "timestamp": "2025-06-09T16:55:29.890Z"
+      },
+      {
+        "id": "31e5afe4-cec7-479b-ba6f-dd89f589ccda",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:13:51.587Z"
+      },
+      {
+        "id": "e56856c5-b3d0-4d89-b9f4-7b5cf0c1e93c",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:16:56.849Z"
+      },
+      {
+        "id": "b4d7326e-19ef-4bf1-86a4-c681a42ca172",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:17:27.624Z"
+      },
+      {
+        "id": "44daaf65-7869-490c-a123-fa69a36cbf91",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:18:03.475Z"
+      },
+      {
+        "id": "d02a5d25-0b3c-44b3-9a42-b7779acc3c51",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:18:14.110Z"
+      },
+      {
+        "id": "77f42605-0bf7-4018-ab4a-0e17b130df92",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T08:18:35.682Z"
       }
     ],
     "createdAt": "2025-06-08T17:01:41.794Z",
-    "updatedAt": "2025-06-09T16:55:29.890Z"
+    "updatedAt": "2025-06-10T08:18:35.682Z"
   },
   {
     "id": "54de2e9e-d529-4b95-b99a-fe7c63d8934d",
@@ -58,5 +100,148 @@
     "messages": [],
     "createdAt": "2025-06-09T14:44:21.964Z",
     "updatedAt": "2025-06-09T14:44:21.964Z"
+  },
+  {
+    "id": "81d274a4-d878-4228-b45d-e69d67dc7174",
+    "name": "базовый чат",
+    "agentId": "3e7cdee1-79b5-40a0-baec-8376dbad1fa4",
+    "messages": [
+      {
+        "id": "31713cf6-2e7d-40f9-b97c-0185005bf6f4",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T09:25:02.571Z"
+      },
+      {
+        "id": "1f899edd-74bb-464a-bc6d-edc0df827b1f",
+        "role": "assistant",
+        "content": " Thank you! How can I assist you today? ",
+        "images": [],
+        "timestamp": "2025-06-10T09:25:14.424Z"
+      },
+      {
+        "id": "18f44b65-6c6b-4e36-85ba-8d7d9e20a068",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T09:49:54.962Z"
+      },
+      {
+        "id": "8d8229a9-e135-4675-ae54-6d15862cdcaf",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-10T09:49:59.451Z"
+      },
+      {
+        "id": "3976854d-a144-441c-b9cb-e8e861817758",
+        "role": "user",
+        "content": "Привет!",
+        "images": [],
+        "timestamp": "2025-06-10T09:51:03.403Z"
+      },
+      {
+        "id": "81d03070-f029-4ea6-8379-10ba0bf83e73",
+        "role": "assistant",
+        "content": " Привет! Ужасна зима, не? ",
+        "images": [],
+        "timestamp": "2025-06-10T09:51:03.703Z"
+      },
+      {
+        "id": "8dc72db2-67b6-4ab9-880d-74f0fbc3de60",
+        "role": "user",
+        "content": "Привет! Расскажи о погоде.",
+        "images": [],
+        "timestamp": "2025-06-10T19:26:57.264Z"
+      },
+      {
+        "id": "8eb6d403-48e3-4745-b51a-49cd684d799c",
+        "role": "user",
+        "content": "Привет! Расскажи о погоде.",
+        "images": [],
+        "timestamp": "2025-06-10T19:27:03.266Z"
+      },
+      {
+        "id": "ab904359-9980-4e0e-9778-347d28982ae7",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-10T19:27:08.739Z"
+      },
+      {
+        "id": "1868ebd9-e6d4-48ad-9845-fda2f13a7928",
+        "role": "assistant",
+        "content": " Добрый день! Столкнулся с проблемой поиска конкретной информации в тексте. Могу лишь представить вам структуру и уровень смыслового содержания текста. Ваша задача - предстановить описание, характеристики, значения и т.д. текста? ",
+        "images": [],
+        "timestamp": "2025-06-10T19:27:10.266Z"
+      },
+      {
+        "id": "760ad1dc-5224-446e-ae52-34ff52562a8b",
+        "role": "user",
+        "content": "trte",
+        "images": [],
+        "timestamp": "2025-06-10T19:38:45.162Z"
+      },
+      {
+        "id": "6225a059-f301-4e67-a9d2-b28f9d6b8de8",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-10T19:38:49.178Z"
+      },
+      {
+        "id": "b6775978-4b8d-4087-a3df-ecd9263634b9",
+        "role": "user",
+        "content": "что делаешь?",
+        "images": [],
+        "timestamp": "2025-06-10T19:49:48.452Z"
+      },
+      {
+        "id": "752a1ea4-ba04-4a45-9847-f1df565ae465",
+        "role": "assistant",
+        "content": " Конец! ",
+        "images": [],
+        "timestamp": "2025-06-10T19:49:53.076Z"
+      },
+      {
+        "id": "9507e345-1b45-437b-94d7-dccb6d7c95eb",
+        "role": "user",
+        "content": "почему конец?",
+        "images": [],
+        "timestamp": "2025-06-10T19:50:06.965Z"
+      },
+      {
+        "id": "3bc32e30-459b-433a-8648-f7b8f744ac7e",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-10T19:50:07.026Z"
+      },
+      {
+        "id": "f949e13b-03bd-4ed1-8906-ee69d170f23e",
+        "role": "user",
+        "content": "ты можешь мне посочь решить пример? 2+ 3",
+        "images": [],
+        "timestamp": "2025-06-10T19:51:26.386Z"
+      },
+      {
+        "id": "01b76f0a-01c9-469c-b556-ab7054c3a5b3",
+        "role": "assistant",
+        "content": " Привет! Не могу помочь в ответе на ваш запрос, так как я не вижу конкретного текста или задач. Если вы еще не сказали о какой-то информации, я могу ее представить или продолжить с помощью дополнительных уровней и структур. Я могу помочь в ответе на различные задачи, но важно быть как конкретный. Какой-то текст я не имею в виде файла или текста в буфere. ",
+        "images": [],
+        "timestamp": "2025-06-10T19:51:28.863Z"
+      }
+    ],
+    "createdAt": "2025-06-10T09:23:12.930Z",
+    "updatedAt": "2025-06-10T19:51:28.863Z"
+  },
+  {
+    "id": "08e7d0ef-9433-4adc-b4ff-78dd7144a0d3",
+    "name": "лплпл",
+    "agentId": "3e7cdee1-79b5-40a0-baec-8376dbad1fa4",
+    "messages": [],
+    "createdAt": "2025-06-10T10:52:18.023Z",
+    "updatedAt": "2025-06-10T10:52:18.023Z"
   }
 ]

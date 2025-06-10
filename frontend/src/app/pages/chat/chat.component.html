@@ -1,66 +1,138 @@
-<div class="chat-container" *ngIf="currentChat$ | async as chat; else noChat">
+<div class="chat-container" *ngIf="chat">
   <!-- Chat Header -->
   <div class="chat-header">
-    <h2>{{ chat.name }}</h2>
-    <p>Agent: {{ getAgentName(chat.agentId) }}</p>
-    
-    <div class="chat-controls">
-      <div class="control-group">
-        <label>LLM Model:</label>
-        <select [value]="getCurrentLLMModel(chat)" 
-                (change)="onLLMModelChange(chat, $any($event.target).value)">
-          <option *ngFor="let model of llmModels" [value]="model.id">
-            {{ model.name }}
-          </option>
-        </select>
+    <div class="chat-info">
+      <h2>{{ chat.name }}</h2>
+      <p class="chat-meta">{{ messages.length }} messages • Created {{ formatDate(chat.createdAt) }}</p>
+    </div>
+    <div class="chat-actions">
+      <!-- Connection Status -->
+      <div class="connection-status" 
+           [class.connected]="connectionStatus.connected"
+           [class.disconnected]="!connectionStatus.connected">
+        <span class="status-dot"></span>
+        <span class="status-text">
+          {{ connectionStatus.connected ? 'Connected' : 'Disconnected' }}
+        </span>
       </div>
+      
+      <!-- Stop Generation Button -->
+      <button *ngIf="isGenerating" 
+              (click)="stopGeneration()" 
+              class="btn btn-danger">
+        ⏹ Stop
+      </button>
+      
+      <button (click)="goBack()" class="btn btn-secondary">
+        ← Back to Chats
+      </button>
     </div>
   </div>
 
   <!-- Messages Area -->
-  <div class="messages-container">
-    <div class="message" 
-         *ngFor="let message of chat.messages"
-         [ngClass]="{'user-message': message.role === 'user', 'assistant-message': message.role === 'assistant'}">
-      
+  <div class="messages-container" #messagesContainer>
+    <div *ngIf="messages.length === 0 && !currentStreamMessage" class="empty-chat">
+      <div class="empty-state">
+        <h3>Start a conversation</h3>
+        <p>Send your first message to begin chatting</p>
+      </div>
+    </div>
+
+    <div *ngFor="let message of messages" 
+         class="message" 
+         [class.user-message]="message.role === 'user'"
+         [class.assistant-message]="message.role === 'assistant'">
+      <div class="message-avatar">
+        <span *ngIf="message.role === 'user'" class="avatar user-avatar">👤</span>
+        <span *ngIf="message.role === 'assistant'" class="avatar assistant-avatar">🤖</span>
+      </div>
       <div class="message-content">
-        <div class="message-role">{{ message.role === 'user' ? 'You' : 'Assistant' }}</div>
-        <div class="message-text">{{ message.content }}</div>
-        <div class="message-timestamp">
-          {{ message.timestamp | date:'short' }}
+        <div class="message-header">
+          <span class="message-role">{{ message.role === 'user' ? 'You' : 'Assistant' }}</span>
+          <span class="message-time">{{ formatTime(message.timestamp) }}</span>
+        </div>
+        <div class="message-text" [innerHTML]="formatMessageContent(message.content)"></div>
+        <div *ngIf="message.images && message.images.length > 0" class="message-images">
+          <div *ngFor="let image of message.images" class="image-placeholder">
+            📷 {{ image }}
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Generation indicator -->
-    <div class="generation-indicator" *ngIf="isGenerating$ | async">
-      <span>Assistant is typing...</span>
-      <button (click)="stopGeneration()">Stop</button>
+    <!-- Current streaming message -->
+    <div *ngIf="currentStreamMessage" class="message assistant-message streaming">
+      <div class="message-avatar">
+        <span class="avatar assistant-avatar">🤖</span>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-role">Assistant</span>
+          <span class="message-time">{{ formatTime(new Date()) }}</span>
+        </div>
+        <div class="message-text" [innerHTML]="formatMessageContent(currentStreamMessage)"></div>
+        <div class="streaming-indicator">
+          <span class="cursor">|</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing indicator when starting generation -->
+    <div *ngIf="isGenerating && !currentStreamMessage" class="message assistant-message generating">
+      <div class="message-avatar">
+        <span class="avatar assistant-avatar">🤖</span>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-role">Assistant</span>
+          <span class="message-time">Thinking...</span>
+        </div>
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Input Area -->
-  <div class="input-area">
-    <div class="input-row">
-      <textarea 
-        [(ngModel)]="messageText"
-        placeholder="Type your message..."
-        (keydown.enter)="onEnterKey($event)"
-        [disabled]="(isGenerating$ | async) || false"
-        rows="3"></textarea>
-      
-      <button 
-        (click)="sendMessage()"
-        [disabled]="!messageText.trim() || ((isGenerating$ | async) || false)">
-        Send
+  <div class="input-container">
+    <div class="input-wrapper">
+      <textarea [(ngModel)]="messageText" 
+                (keydown)="onKeyDown($event)"
+                placeholder="Type your message..." 
+                class="message-input"
+                rows="1"
+                [disabled]="isGenerating || !connectionStatus.connected"
+                #messageInput></textarea>
+      <button (click)="sendMessage()" 
+              [disabled]="!messageText.trim() || isGenerating || !connectionStatus.connected"
+              class="send-button"
+              [class.disabled]="!messageText.trim() || isGenerating || !connectionStatus.connected">
+        <span *ngIf="!isGenerating">Send</span>
+        <span *ngIf="isGenerating">Sending...</span>
       </button>
+    </div>
+    <div *ngIf="statusMessage" class="status-message" 
+         [class.error]="statusMessage.includes('Error')" 
+         [class.success]="!statusMessage.includes('Error')">
+      {{ statusMessage }}
+    </div>
+    <div *ngIf="!connectionStatus.connected" class="status-message error">
+      WebSocket disconnected. Attempting to reconnect...
+      <button (click)="reconnectWebSocket()" class="btn-link">Retry now</button>
     </div>
   </div>
 </div>
 
-<ng-template #noChat>
-  <div class="no-chat">
-    <h2>No Chat Selected</h2>
-    <p>Select a chat from the sidebar or create a new one to start chatting.</p>
-  </div>
-</ng-template>
+<div *ngIf="!chat && !loading" class="error-state">
+  <h3>Chat not found</h3>
+  <p>The chat you're looking for doesn't exist or has been deleted.</p>
+  <button (click)="goBack()" class="btn btn-primary">Go back to chats</button>
+</div>
+
+<div *ngIf="loading" class="loading-state">
+  <div class="loading-spinner"></div>
+  <p>Loading chat...</p>
+</div>

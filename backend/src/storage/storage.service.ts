@@ -146,6 +146,8 @@ export class StorageService {
   }
 
   getChat(id: string): Chat | undefined {
+    //console.log(this.getChats(), "this.getChats()");
+   // console.log(this.getChats().find((c: Chat) => c.id === id), "find", id)
     return this.getChats().find((c: Chat) => c.id === id);
   }
 }

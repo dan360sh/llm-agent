@@ -237,26 +237,29 @@ export class ChatController {
 
   private async sendMessage(req: Request, res: Response) {
     try {
+      console.log('sendMessage0');
       const { id } = req.params;
       const { content, images } = req.body;
       
       if (!content || content.trim().length === 0) {
+         console.log('sendMessager1');
         return res.status(400).json({ error: 'Message content is required' });
       }
 
       // Проверяем что чат существует
       const chat = this.chatService.getChat(id);
       if (!chat) {
+        console.log('sendMessager2');
         return res.status(404).json({ error: 'Chat not found' });
       }
 
       // Отправляем ответ немедленно для подтверждения получения сообщения
       res.json({ success: true, chatId: id });
-
+      console.log('sendMessage1');
       // Обрабатываем сообщение асинхронно с потоковым ответом
       try {
         let streamingMessageId: string | null = null;
-
+        console.log('sendMessage2');
         const onStream = (chunk: string) => {
           // Отправляем streaming chunk через WebSocket
           this.io.to(id).emit('message-stream', {
@@ -266,13 +269,15 @@ export class ChatController {
             done: false
           });
         };
-
+        console.log('sendMessage3');
         const assistantMessage = await this.chatService.sendMessage(
           id, 
           content, 
           images,
           onStream
         );
+        console.log('sendMessage4');
+        console.log(assistantMessage, 'assistantMessage');
 
         streamingMessageId = assistantMessage.id;
 

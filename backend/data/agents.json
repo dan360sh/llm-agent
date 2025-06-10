@@ -8,5 +8,15 @@
     "mcpServerIds": [],
     "createdAt": "2025-06-08T16:59:25.684Z",
     "updatedAt": "2025-06-08T17:01:41.782Z"
+  },
+  {
+    "name": "Мой ассистент",
+    "description": "Помощник общего назначения",
+    "systemPrompt": "You are a helpful AI assistant.",
+    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
+    "mcpServerIds": [],
+    "id": "3e7cdee1-79b5-40a0-baec-8376dbad1fa4",
+    "createdAt": "2025-06-10T09:17:01.905Z",
+    "updatedAt": "2025-06-10T09:17:01.905Z"
   }
 ]
