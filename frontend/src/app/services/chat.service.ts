@@ -25,14 +25,25 @@ export class ChatService {
 
   loadChats(): Observable<Chat[]> {
     return this.apiService.getChats().pipe(
-      map(response => response.data || []),
+      map(response => {
+        // response уже содержит {success: true, data: [...]}
+        if (response.success && response.data) {
+          return response.data;
+        }
+        return [];
+      }),
       tap(chats => this.chatsSubject.next(chats))
     );
   }
 
   createChat(request: CreateChatRequest): Observable<Chat> {
     return this.apiService.createChat(request).pipe(
-      map(response => response.data!),
+      map(response => {
+        if (response.success && response.data) {
+          return response.data;
+        }
+        throw new Error('Failed to create chat');
+      }),
       tap(chat => {
         const currentChats = this.chatsSubject.value;
         this.chatsSubject.next([chat, ...currentChats]);
@@ -42,14 +53,24 @@ export class ChatService {
 
   selectChat(chatId: string): Observable<Chat> {
     return this.apiService.getChat(chatId).pipe(
-      map(response => response.data!),
+      map(response => {
+        if (response.success && response.data) {
+          return response.data;
+        }
+        throw new Error('Chat not found');
+      }),
       tap(chat => this.currentChatSubject.next(chat))
     );
   }
 
   deleteChat(chatId: string): Observable<void> {
     return this.apiService.deleteChat(chatId).pipe(
-      map(response => response.data!),
+      map(response => {
+        if (response.success) {
+          return;
+        }
+        throw new Error('Failed to delete chat');
+      }),
       tap(() => {
         const currentChats = this.chatsSubject.value;
         const updatedChats = currentChats.filter(c => c.id !== chatId);
@@ -86,7 +107,12 @@ export class ChatService {
       content,
       images
     }).pipe(
-      map(response => response.data!)
+      map(response => {
+        if (response.success) {
+          return;
+        }
+        throw new Error('Failed to send message');
+      })
     );
   }
 
@@ -102,7 +128,12 @@ export class ChatService {
     }
 
     return this.apiService.updateChatLLM(currentChat.id, llmModelId).pipe(
-      map(response => response.data!),
+      map(response => {
+        if (response.success && response.data) {
+          return response.data;
+        }
+        throw new Error('Failed to update chat LLM');
+      }),
       tap(chat => this.currentChatSubject.next(chat))
     );
   }
@@ -114,7 +145,12 @@ export class ChatService {
     }
 
     return this.apiService.updateChatMCP(currentChat.id, mcpServers).pipe(
-      map(response => response.data!),
+      map(response => {
+        if (response.success && response.data) {
+          return response.data;
+        }
+        throw new Error('Failed to update chat MCP');
+      }),
       tap(chat => this.currentChatSubject.next(chat))
     );
   }

@@ -135,5 +135,19 @@
     "supportsImages": true,
     "enabled": true,
     "createdAt": "2025-06-09T13:19:10.150Z"
+  },
+  {
+    "id": "8d5b59cd-9854-457b-adef-3b2f7065ecf0",
+    "name": "gemma3:12b",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "gemma3:12b",
+      "temperature": 0.7,
+      "maxTokens": 3000
+    },
+    "supportsImages": false,
+    "enabled": true,
+    "createdAt": "2025-06-10T21:04:47.326Z"
   }
 ]

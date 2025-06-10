@@ -439,9 +439,9 @@ export class MCPServersComponent implements OnInit {
   }
 
   loadServers() {
-    this.http.get<MCPServer[]>('/api/mcp').subscribe({
-      next: (servers) => {
-        this.servers = servers;
+    this.http.get<{success: boolean, data: MCPServer[]}>('/api/mcp').subscribe({
+      next: (response) => {
+        this.servers = response.data || [];
       },
       error: (error) => {
         console.error('Error loading servers:', error);

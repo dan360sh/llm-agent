@@ -380,9 +380,9 @@ export class LLMModelsComponent implements OnInit {
   }
 
   loadModels() {
-    this.http.get<LLMModel[]>('/api/llm').subscribe({
-      next: (models) => {
-        this.models = models;
+    this.http.get<{success: boolean, data: LLMModel[]}>('/api/llm').subscribe({
+      next: (response) => {
+        this.models = response.data || [];
       },
       error: (error) => {
         console.error('Error loading models:', error);

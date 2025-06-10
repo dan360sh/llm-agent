@@ -101,6 +101,8 @@ export class ChatService {
     images?: string[],
     onStream?: (chunk: string) => void
   ): Promise<Message> {
+    console.log(`SendMessage called for chat ${chatId}`);
+    
     const chat = this.getChat(chatId);
     if (!chat) {
       throw new Error(`Chat not found: ${chatId}`);
@@ -111,13 +113,28 @@ export class ChatService {
       throw new Error(`Agent not found: ${chat.agentId}`);
     }
 
+    console.log(`Using agent: ${agent.name}, LLM: ${agent.llmConfigId}`);
+
     // Добавляем сообщение пользователя
     await this.addMessage(chatId, content, 'user', images);
 
     // Подготавливаем контекст для LLM
     const messages = await this.prepareMessagesForLLM(chat, agent);
+    console.log(`Prepared ${messages.length} messages for LLM`);
 
     try {
+      // Проверяем что LLM модель существует
+      const llmModel = this.llmService.getLLMModel(agent.llmConfigId);
+      if (!llmModel) {
+        throw new Error(`LLM model not found: ${agent.llmConfigId}`);
+      }
+      
+      if (!llmModel.enabled) {
+        throw new Error(`LLM model is disabled: ${agent.llmConfigId}`);
+      }
+      
+      console.log(`Using LLM model: ${llmModel.name} (${llmModel.provider})`);
+      
       // Генерируем ответ от LLM
       const response = await this.llmService.generateResponse(
         agent.llmConfigId,
@@ -125,13 +142,20 @@ export class ChatService {
         onStream
       );
 
+      console.log(`Generated response: ${response?.substring(0, 100)}...`);
+
       // Добавляем ответ ассистента
       const assistantMessage = await this.addMessage(chatId, response, 'assistant');
       
       return assistantMessage;
     } catch (error) {
       console.error('Error generating response:', error);
-      throw error;
+      
+      // Добавляем сообщение об ошибке
+      const errorMessage = `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`;
+      const assistantMessage = await this.addMessage(chatId, errorMessage, 'assistant');
+      
+      return assistantMessage;
     }
   }
 

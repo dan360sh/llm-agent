@@ -481,9 +481,9 @@ export class AgentsComponent implements OnInit {
   }
 
   loadAgents() {
-    this.http.get<Agent[]>('/api/agents').subscribe({
-      next: (agents) => {
-        this.agents = agents;
+    this.http.get<{success: boolean, data: Agent[]}>('/api/agents').subscribe({
+      next: (response) => {
+        this.agents = response.data || [];
       },
       error: (error) => {
         console.error('Error loading agents:', error);
@@ -493,9 +493,9 @@ export class AgentsComponent implements OnInit {
   }
 
   loadLLMModels() {
-    this.http.get<LLMModel[]>('/api/llm').subscribe({
-      next: (models) => {
-        this.llmModels = models;
+    this.http.get<{success: boolean, data: LLMModel[]}>('/api/llm').subscribe({
+      next: (response) => {
+        this.llmModels = response.data || [];
       },
       error: (error) => {
         console.error('Error loading LLM models:', error);
@@ -504,9 +504,9 @@ export class AgentsComponent implements OnInit {
   }
 
   loadMCPServers() {
-    this.http.get<MCPServer[]>('/api/mcp').subscribe({
-      next: (servers) => {
-        this.mcpServers = servers.filter(s => s.enabled);
+    this.http.get<{success: boolean, data: MCPServer[]}>('/api/mcp').subscribe({
+      next: (response) => {
+        this.mcpServers = (response.data || []).filter(s => s.enabled);
       },
       error: (error) => {
         console.error('Error loading MCP servers:', error);

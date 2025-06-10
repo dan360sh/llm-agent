@@ -42,6 +42,9 @@ export class WebSocketService {
       this.socket.on('connect', () => {
         console.log('WebSocket connected:', this.socket?.id);
         this.connectionStatus.next({ connected: true });
+        
+        // Начинаем ping-pong для поддержания соединения
+        this.startPingPong();
       });
 
       this.socket.on('disconnect', (reason) => {
@@ -97,10 +100,26 @@ export class WebSocketService {
           error: data.error
         });
       });
+      
+      // Обрабатываем pong ответы
+      this.socket.on('pong', () => {
+        console.log('Received pong from server');
+      });
 
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
       this.connectionStatus.next({ connected: false, error: 'Failed to connect' });
+    }
+  }
+  
+  private startPingPong(): void {
+    if (this.socket) {
+      // Отправляем ping каждые 30 секунд
+      setInterval(() => {
+        if (this.socket && this.socket.connected) {
+          this.socket.emit('ping');
+        }
+      }, 30000);
     }
   }
 
@@ -126,7 +145,16 @@ export class WebSocketService {
       // Присоединяемся к новому чату
       this.socket.emit('join-chat', chatId);
       this.currentChatId = chatId;
-      console.log('Joined chat:', chatId);
+      console.log('Joining chat:', chatId);
+      
+      // Ожидаем подтверждения
+      this.socket.once('joined-chat', (data: { chatId: string }) => {
+        console.log('Successfully joined chat:', data.chatId);
+      });
+    } else {
+      console.error('WebSocket not connected, cannot join chat');
+      // Попытаемся переподключиться
+      this.reconnect();
     }
   }
 

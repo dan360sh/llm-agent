@@ -9,10 +9,21 @@ export class OpenAIProvider extends LLMProvider {
   constructor(config: OpenAIConfig) {
     super();
     this.config = config;
+    
+    console.log('Initializing OpenAI provider with config:', {
+      baseURL: config.baseURL,
+      model: config.model,
+      hasApiKey: !!config.apiKey,
+      apiKeyPrefix: config.apiKey?.substring(0, 10) + '...',
+    });
+    
     this.openai = new OpenAI({
       baseURL: config.baseURL,
       apiKey: config.apiKey,
-      defaultHeaders: config.headers,
+      defaultHeaders: {
+        ...config.headers,
+        'Content-Type': 'application/json',
+      },
     });
   }
 
@@ -52,25 +63,38 @@ export class OpenAIProvider extends LLMProvider {
     messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
     onStream: (chunk: string) => void
   ): Promise<string> {
-    const stream = await this.openai.chat.completions.create({
-      model: this.config.model,
-      messages: messages,
-      max_tokens: this.config.maxTokens || 3000,
-      temperature: this.config.temperature || 0.7,
-      stream: true,
-    });
+    try {
+      console.log('Creating streaming completion with:', {
+        model: this.config.model,
+        messageCount: messages.length,
+        maxTokens: this.config.maxTokens,
+        temperature: this.config.temperature,
+      });
+      
+      const stream = await this.openai.chat.completions.create({
+        model: this.config.model,
+        messages: messages,
+        max_tokens: this.config.maxTokens || 3000,
+        temperature: this.config.temperature || 0.7,
+        stream: true,
+      });
 
-    let fullResponse = '';
-    
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || '';
-      if (content) {
-        fullResponse += content;
-        onStream(content);
+      let fullResponse = '';
+      
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        if (content) {
+          fullResponse += content;
+          onStream(content);
+        }
       }
-    }
 
-    return fullResponse;
+      console.log(`Streaming complete. Total response length: ${fullResponse.length}`);
+      return fullResponse;
+    } catch (error) {
+      console.error('Error in generateStreamingResponse:', error);
+      throw error;
+    }
   }
 
   private async generateNonStreamingResponse(

@@ -85,34 +85,6 @@ class App {
     // Static files для загруженных изображений
     this.app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-    // Multer для загрузки файлов
-    const storage = multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-      }
-    });
-
-    const upload = multer({ 
-      storage,
-      limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
-      },
-      fileFilter: (req, file, cb) => {
-        // Разрешаем только изображения
-        if (file.mimetype.startsWith('image/')) {
-          cb(null, true);
-        } else {
-          cb(new Error('Only image files are allowed'));
-        }
-      }
-    });
-
-    this.app.use('/api/upload', upload.single('image'));
-
     // Логирование запросов
     this.app.use((req, res, next) => {
       console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
@@ -179,75 +151,83 @@ class App {
     this.io.on('connection', (socket) => {
       console.log('Client connected:', socket.id);
 
+      // Добавляем хранение текущего чата для этого сокета
+      let currentChatId: string | null = null;
+
       socket.on('join-chat', (chatId: string) => {
+        // Если уже в другом чате, покидаем его
+        if (currentChatId && currentChatId !== chatId) {
+          socket.leave(currentChatId);
+          console.log(`Client ${socket.id} left chat ${currentChatId}`);
+        }
+        
         socket.join(chatId);
+        currentChatId = chatId;
         console.log(`Client ${socket.id} joined chat ${chatId}`);
+        
+        // Подтверждаем присоединение
+        socket.emit('joined-chat', { chatId });
       });
 
       socket.on('leave-chat', (chatId: string) => {
         socket.leave(chatId);
+        if (currentChatId === chatId) {
+          currentChatId = null;
+        }
         console.log(`Client ${socket.id} left chat ${chatId}`);
       });
 
       socket.on('send-message', async (data: { chatId: string, content: string, images?: string[] }) => {
-        console.log('WebSocket message received:', data);
+        console.log('=== WebSocket message received ===');
+        console.log('Socket ID:', socket.id);
+        console.log('Data:', data);
+        console.log('Current chat ID:', currentChatId);
+        console.log('Socket rooms:', Array.from(socket.rooms));
         
         try {
           const { chatId, content, images } = data;
+          console.log('Processing message for chat:', chatId, 'content length:', content?.length);
+          
+          // Убеждаемся, что сокет в правильной комнате
+          if (!socket.rooms.has(chatId)) {
+            console.log('Socket not in room, rejoining...');
+            socket.join(chatId);
+            currentChatId = chatId;
+          }
           
           // Проверяем что чат существует
           const chat = this.chatService.getChat(chatId);
           if (!chat) {
+            console.error('Chat not found:', chatId);
             socket.emit('generation-error', {
               chatId,
               error: 'Chat not found'
             });
             return;
           }
-
-          // Отправляем уведомление о начале генерации
-          this.io.to(chatId).emit('generation-start', {
-            chatId,
-            messageId: Date.now().toString()
-          });
-
-          let streamingMessageId: string | null = null;
           
-          // Callback для потокового ответа
-          const onStream = (chunk: string) => {
-            this.io.to(chatId).emit('stream-response', {
-              type: 'content',
-              content: chunk,
-              chatId,
-              messageId: streamingMessageId
-            });
-          };
-
-          // Отправляем сообщение и получаем ответ
-          const assistantMessage = await this.chatService.sendMessage(
-            chatId, 
-            content, 
-            images,
-            onStream
-          );
-
-          streamingMessageId = assistantMessage.id;
-
-          // Отправляем финальное уведомление о завершении
-          this.io.to(chatId).emit('stream-response', {
-            type: 'done',
-            chatId,
-            messageId: assistantMessage.id
-          });
-
-          this.io.to(chatId).emit('generation-complete', {
-            chatId,
-            messageId: assistantMessage.id
-          });
+          console.log('Chat found, proceeding with message processing...');
+          
+          // Обрабатываем сообщение
+          await this.chatController.handleMessageProcessing(chatId, content, images);
+          
+          console.log('=== Message processing completed successfully ===');
+          
+          // ПРИНУДИТЕЛЬНО переподключаем сокет к комнате после обработки
+          setTimeout(() => {
+            if (socket.connected) {
+              socket.leave(chatId);
+              socket.join(chatId);
+              console.log(`Socket ${socket.id} rejoined chat ${chatId} after message processing`);
+            }
+          }, 100);
 
         } catch (error) {
-          console.error('Error in WebSocket message handling:', error);
+          console.error('=== Error in WebSocket message handling ===');
+          console.error('Error:', error);
+          console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
           
+          // Отправляем ошибку напрямую клиенту
           socket.emit('stream-response', {
             type: 'error',
             error: error instanceof Error ? error.message : 'Unknown error',
@@ -274,6 +254,14 @@ class App {
 
       socket.on('disconnect', () => {
         console.log('Client disconnected:', socket.id);
+        if (currentChatId) {
+          console.log('Client was in chat:', currentChatId);
+        }
+      });
+      
+      // Добавляем ping-pong для поддержания соединения
+      socket.on('ping', () => {
+        socket.emit('pong');
       });
     });
   }

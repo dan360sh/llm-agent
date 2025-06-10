@@ -115,10 +115,10 @@ export class ChatController {
   private async getAllChats(req: Request, res: Response) {
     try {
       const chats = this.chatService.getChats();
-      res.json(chats);
+      res.json({ success: true, data: chats });
     } catch (error) {
       console.error('Error getting chats:', error);
-      res.status(500).json({ error: 'Failed to get chats' });
+      res.status(500).json({ success: false, error: 'Failed to get chats' });
     }
   }
 
@@ -128,13 +128,13 @@ export class ChatController {
       const chat = this.chatService.getChat(id);
       
       if (!chat) {
-        return res.status(404).json({ error: 'Chat not found' });
+        return res.status(404).json({ success: false, error: 'Chat not found' });
       }
 
-      res.json(chat);
+      res.json({ success: true, data: chat });
     } catch (error) {
       console.error('Error getting chat:', error);
-      res.status(500).json({ error: 'Failed to get chat' });
+      res.status(500).json({ success: false, error: 'Failed to get chat' });
     }
   }
 
@@ -143,17 +143,17 @@ export class ChatController {
       const { agentId, name } = req.body;
       
       if (!agentId) {
-        return res.status(400).json({ error: 'Agent ID is required' });
+        return res.status(400).json({ success: false, error: 'Agent ID is required' });
       }
 
       const chat = await this.chatService.createChat(agentId, name);
-      res.status(201).json(chat);
+      res.status(201).json({ success: true, data: chat });
     } catch (error) {
       console.error('Error creating chat:', error);
       if (error instanceof Error && error.message.includes('not found')) {
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ success: false, error: error.message });
       } else {
-        res.status(500).json({ error: 'Failed to create chat' });
+        res.status(500).json({ success: false, error: 'Failed to create chat' });
       }
     }
   }
@@ -180,10 +180,10 @@ export class ChatController {
       const { id } = req.params;
 
       await this.chatService.deleteChat(id);
-      res.status(204).send();
+      res.json({ success: true });
     } catch (error) {
       console.error('Error deleting chat:', error);
-      res.status(500).json({ error: 'Failed to delete chat' });
+      res.status(500).json({ success: false, error: 'Failed to delete chat' });
     }
   }
 
@@ -237,79 +237,123 @@ export class ChatController {
 
   private async sendMessage(req: Request, res: Response) {
     try {
-      console.log('sendMessage0');
+      console.log('HTTP sendMessage called');
       const { id } = req.params;
       const { content, images } = req.body;
       
       if (!content || content.trim().length === 0) {
-         console.log('sendMessager1');
-        return res.status(400).json({ error: 'Message content is required' });
+        return res.status(400).json({ success: false, error: 'Message content is required' });
       }
 
       // Проверяем что чат существует
       const chat = this.chatService.getChat(id);
       if (!chat) {
-        console.log('sendMessager2');
-        return res.status(404).json({ error: 'Chat not found' });
+        
+        return res.status(404).json({ success: false, error: 'Chat not found' });
       }
 
       // Отправляем ответ немедленно для подтверждения получения сообщения
-      res.json({ success: true, chatId: id });
-      console.log('sendMessage1');
+      res.json({ success: true, data: { chatId: id } });
+      
       // Обрабатываем сообщение асинхронно с потоковым ответом
-      try {
-        let streamingMessageId: string | null = null;
-        console.log('sendMessage2');
-        const onStream = (chunk: string) => {
-          // Отправляем streaming chunk через WebSocket
-          this.io.to(id).emit('message-stream', {
-            chatId: id,
-            messageId: streamingMessageId,
-            chunk,
-            done: false
-          });
-        };
-        console.log('sendMessage3');
-        const assistantMessage = await this.chatService.sendMessage(
-          id, 
-          content, 
-          images,
-          onStream
-        );
-        console.log('sendMessage4');
-        console.log(assistantMessage, 'assistantMessage');
-
-        streamingMessageId = assistantMessage.id;
-
-        // Отправляем финальное уведомление о завершении
-        this.io.to(id).emit('message-stream', {
-          chatId: id,
-          messageId: assistantMessage.id,
-          chunk: '',
-          done: true
-        });
-
-        // Отправляем обновленный чат
-        const updatedChat = this.chatService.getChat(id);
-        this.io.to(id).emit('chat-updated', updatedChat);
-
-      } catch (streamError) {
-        console.error('Error in streaming response:', streamError);
-        
-        // Отправляем ошибку через WebSocket
-        this.io.to(id).emit('message-error', {
-          chatId: id,
-          error: streamError instanceof Error ? streamError.message : 'Unknown error'
-        });
-      }
+      this.handleMessageProcessing(id, content, images);
 
     } catch (error) {
       console.error('Error sending message:', error);
       if (error instanceof Error && error.message.includes('not found')) {
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ success: false, error: error.message });
       } else {
-        res.status(500).json({ error: 'Failed to send message' });
+        res.status(500).json({ success: false, error: 'Failed to send message' });
       }
+    }
+  }
+
+  // Общая функция для обработки сообщений (используется и в HTTP, и в WebSocket)
+  public async handleMessageProcessing(chatId: string, content: string, images?: string[]): Promise<void> {
+    try {
+      console.log('ChatController: Processing message for chat:', chatId);
+      console.log('ChatController: Content length:', content?.length);
+      
+      // Отправляем уведомление о начале генерации
+      const messageId = Date.now().toString();
+      console.log('ChatController: Emitting generation-start for chat:', chatId);
+      this.io.to(chatId).emit('generation-start', {
+        chatId,
+        messageId
+      });
+
+      let streamingMessageId: string | null = messageId;
+      let streamEnded = false;
+      
+      // Callback для потокового ответа с защитой от повторных вызовов
+      const onStream = (chunk: string) => {
+        if (streamEnded) {
+          console.log('ChatController: Stream already ended, ignoring chunk');
+          return;
+        }
+        
+        try {
+          console.log('ChatController: Streaming chunk:', chunk.substring(0, 50) + '...');
+          this.io.to(chatId).emit('stream-response', {
+            type: 'content',
+            content: chunk,
+            chatId,
+            messageId: streamingMessageId
+          });
+        } catch (error) {
+          console.error('ChatController: Error in onStream callback:', error);
+        }
+      };
+
+      console.log('ChatController: Calling chatService.sendMessage...');
+      // Отправляем сообщение и получаем ответ
+      const assistantMessage = await this.chatService.sendMessage(
+        chatId, 
+        content, 
+        images,
+        onStream
+      );
+
+      // Помечаем поток как завершенный
+      streamEnded = true;
+      
+      console.log('ChatController: Message sent successfully, assistant message ID:', assistantMessage.id);
+      streamingMessageId = assistantMessage.id;
+
+      // Отправляем финальное уведомление о завершении
+      console.log('ChatController: Emitting generation completion events');
+      this.io.to(chatId).emit('stream-response', {
+        type: 'done',
+        chatId,
+        messageId: assistantMessage.id
+      });
+
+      this.io.to(chatId).emit('generation-complete', {
+        chatId,
+        messageId: assistantMessage.id
+      });
+      
+      console.log('ChatController: Message processing completed successfully');
+
+    } catch (error) {
+      console.error('ChatController: Error in message processing:', error);
+      console.error('ChatController: Error stack:', error instanceof Error ? error.stack : 'No stack');
+      
+      // Отправляем ошибку через WebSocket
+      this.io.to(chatId).emit('stream-response', {
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        chatId
+      });
+
+      this.io.to(chatId).emit('generation-error', {
+        chatId,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      
+      // НЕ перебрасываем ошибку - это ключевое изменение!
+      console.log('ChatController: Error handled, continuing...');
+      // Не throw error; - это позволит WebSocket обработчику продолжить работу
     }
   }
 

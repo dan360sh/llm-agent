@@ -51,7 +51,6 @@ export class ApiService {
   // Message API
   sendMessage(request: SendMessageRequest): Observable<ApiResponse<void>> {
     const formData = new FormData();
-    formData.append('chatId', request.chatId);
     formData.append('content', request.content);
     
     if (request.images) {
@@ -60,7 +59,7 @@ export class ApiService {
       });
     }
 
-    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/chats/message`, formData);
+    return this.http.post<ApiResponse<void>>(`${this.baseUrl}/chats/${request.chatId}/messages`, formData);
   }
 
   // Agent API

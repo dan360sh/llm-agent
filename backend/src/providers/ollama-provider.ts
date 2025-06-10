@@ -42,6 +42,8 @@ export class OllamaProvider extends LLMProvider {
     messages: any[],
     onStream: (chunk: string) => void
   ): Promise<string> {
+    console.log('OllamaProvider: Starting streaming response generation');
+    
     const response = await axios.post(
       `${this.config.baseURL}/api/chat`,
       {
@@ -59,36 +61,70 @@ export class OllamaProvider extends LLMProvider {
     );
 
     let fullResponse = '';
+    let streamCompleted = false;
 
     return new Promise((resolve, reject) => {
       response.data.on('data', (chunk: Buffer) => {
-        const lines = chunk.toString().split('\n').filter(line => line.trim());
+        if (streamCompleted) {
+          console.log('OllamaProvider: Stream already completed, ignoring chunk');
+          return;
+        }
         
-        for (const line of lines) {
-          try {
-            const data = JSON.parse(line);
-            if (data.message && data.message.content) {
-              const content = data.message.content;
-              fullResponse += content;
-              onStream(content);
+        try {
+          const lines = chunk.toString().split('\n').filter(line => line.trim());
+          
+          for (const line of lines) {
+            try {
+              const data = JSON.parse(line);
+              if (data.message && data.message.content) {
+                const content = data.message.content;
+                fullResponse += content;
+                
+                // Безопасно вызываем callback
+                try {
+                  onStream(content);
+                } catch (callbackError) {
+                  console.error('OllamaProvider: Error in onStream callback:', callbackError);
+                }
+              }
+              
+              if (data.done) {
+                console.log('OllamaProvider: Stream completed');
+                streamCompleted = true;
+                resolve(fullResponse);
+                return;
+              }
+            } catch (e) {
+              // Игнорируем некорректные JSON строки
             }
-            
-            if (data.done) {
-              resolve(fullResponse);
-            }
-          } catch (e) {
-            // Игнорируем некорректные JSON строки
           }
+        } catch (parseError) {
+          console.error('OllamaProvider: Error parsing chunk:', parseError);
         }
       });
 
       response.data.on('error', (error: any) => {
+        console.error('OllamaProvider: Stream error:', error);
+        streamCompleted = true;
         reject(error);
       });
 
       response.data.on('end', () => {
-        resolve(fullResponse);
+        console.log('OllamaProvider: Stream ended');
+        if (!streamCompleted) {
+          streamCompleted = true;
+          resolve(fullResponse);
+        }
       });
+      
+      // Добавляем timeout для защиты от зависания
+      setTimeout(() => {
+        if (!streamCompleted) {
+          console.log('OllamaProvider: Stream timeout, resolving with current response');
+          streamCompleted = true;
+          resolve(fullResponse);
+        }
+      }, 60000); // 60 секунд timeout
     });
   }
 

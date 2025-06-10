@@ -430,8 +430,9 @@ export class ChatsListComponent implements OnInit {
 
   loadChats() {
     this.loading = true;
-    this.http.get<Chat[]>('/api/chats').subscribe({
-      next: (chats) => {
+    this.http.get<{success: boolean, data: Chat[]}>('/api/chats').subscribe({
+      next: (response) => {
+        const chats = response.data || [];
         this.chats = chats.map(chat => ({
           ...chat,
           messageCount: chat.messages?.length || 0,
@@ -450,9 +451,9 @@ export class ChatsListComponent implements OnInit {
   }
 
   loadLLMModels() {
-    this.http.get<LLMModel[]>('/api/llm').subscribe({
-      next: (models) => {
-        this.llmModels = models;
+    this.http.get<{success: boolean, data: LLMModel[]}>('/api/llm').subscribe({
+      next: (response) => {
+        this.llmModels = response.data || [];
       },
       error: (error) => {
         console.error('Error loading LLM models:', error);
@@ -461,9 +462,9 @@ export class ChatsListComponent implements OnInit {
   }
 
   loadAgents() {
-    this.http.get<Agent[]>('/api/agents').subscribe({
-      next: (agents) => {
-        this.agents = agents; // Show all agents
+    this.http.get<{success: boolean, data: Agent[]}>('/api/agents').subscribe({
+      next: (response) => {
+        this.agents = response.data || []; // Show all agents
       },
       error: (error) => {
         console.error('Error loading agents:', error);
@@ -485,13 +486,15 @@ export class ChatsListComponent implements OnInit {
       llmModelId: this.selectionMode === 'llm' ? this.newChat.llmModelId : undefined
     };
 
-    this.http.post<Chat>('/api/chats', chatData).subscribe({
-      next: (chat) => {
-        this.statusMessage = 'Chat created successfully!';
-        this.cancelCreate();
-        this.loadChats();
-        // Navigate to the new chat
-        this.router.navigate(['/chat', chat.id]);
+    this.http.post<{success: boolean, data: Chat}>('/api/chats', chatData).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.statusMessage = 'Chat created successfully!';
+          this.cancelCreate();
+          this.loadChats();
+          // Navigate to the new chat
+          this.router.navigate(['/chat', response.data.id]);
+        }
       },
       error: (error) => {
         console.error('Error creating chat:', error);

@@ -100,9 +100,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     console.log('Loading chat with ID:', chatId);
     
     // Получаем все чаты и находим нужный по ID
-    this.http.get<Chat[]>('http://localhost:3000/api/chats').subscribe({
-      next: (chats) => {
-        console.log('All chats received:', chats);
+    this.http.get<{success: boolean, data: Chat[]}>('http://localhost:3000/api/chats').subscribe({
+      next: (response) => {
+        console.log('All chats received:', response);
+        const chats = response.data || [];
         const foundChat = chats.find(chat => chat.id === chatId);
         
         if (foundChat) {
@@ -230,5 +231,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   formatMessageContent(content: string): string {
     // Simple formatting - convert line breaks to <br>
     return content.replace(/\n/g, '<br>');
+  }
+
+  getCurrentTime(): string {
+    return this.formatTime(new Date());
   }
 }

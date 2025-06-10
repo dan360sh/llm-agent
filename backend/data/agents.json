@@ -4,7 +4,7 @@
     "name": "Default Assistant",
     "description": "Default AI assistant",
     "systemPrompt": "You are a helpful AI assistant. Be concise and helpful in your responses.",
-    "llmConfigId": "8f38c141-4fc5-489c-8d11-fbac0634c760",
+    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
     "mcpServerIds": [],
     "createdAt": "2025-06-08T16:59:25.684Z",
     "updatedAt": "2025-06-08T17:01:41.782Z"
@@ -18,5 +18,45 @@
     "id": "3e7cdee1-79b5-40a0-baec-8376dbad1fa4",
     "createdAt": "2025-06-10T09:17:01.905Z",
     "updatedAt": "2025-06-10T09:17:01.905Z"
+  },
+  {
+    "name": "OpenRouter Test Agent",
+    "description": "Test agent with OpenRouter GPT-4O",
+    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful in your responses.",
+    "llmConfigId": "8f38c141-4fc5-489c-8d11-fbac0634c760",
+    "mcpServerIds": [],
+    "id": "ed923766-4ee8-4736-8778-ebdb0e80615d",
+    "createdAt": "2025-06-10T21:50:54.604Z",
+    "updatedAt": "2025-06-10T21:50:54.604Z"
+  },
+  {
+    "name": "Ollama Test Agent",
+    "description": "Test agent with Ollama Llava",
+    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful in your responses.",
+    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
+    "mcpServerIds": [],
+    "id": "b5e48233-f4db-4b67-813c-84be043041bc",
+    "createdAt": "2025-06-10T23:15:39.636Z",
+    "updatedAt": "2025-06-10T23:15:39.636Z"
+  },
+  {
+    "name": "Test Agent WebSocket",
+    "description": "Test agent for WebSocket",
+    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful.",
+    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
+    "mcpServerIds": [],
+    "id": "e7946a20-42c3-4215-bf3b-ed6c1e2cd685",
+    "createdAt": "2025-06-10T23:26:17.294Z",
+    "updatedAt": "2025-06-10T23:26:17.294Z"
+  },
+  {
+    "name": "Test Agent WebSocket 2",
+    "description": "Test agent for WebSocket",
+    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful.",
+    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
+    "mcpServerIds": [],
+    "id": "34cd802d-c88e-47a1-9fbc-99eb4ef03fe4",
+    "createdAt": "2025-06-10T23:26:24.195Z",
+    "updatedAt": "2025-06-10T23:26:24.195Z"
   }
 ]

@@ -183,10 +183,10 @@ export class AgentController {
   private async getAllAgents(req: Request, res: Response) {
     try {
       const agents = this.agentService.getAgents();
-      res.json(agents);
+      res.json({ success: true, data: agents });
     } catch (error) {
       console.error('Error getting agents:', error);
-      res.status(500).json({ error: 'Failed to get agents' });
+      res.status(500).json({ success: false, error: 'Failed to get agents' });
     }
   }
 
@@ -214,16 +214,17 @@ export class AgentController {
       const validationErrors = await this.agentService.validateAgent(agentData);
       if (validationErrors.length > 0) {
         return res.status(400).json({ 
+          success: false,
           error: 'Validation failed',
           details: validationErrors
         });
       }
 
       const agent = await this.agentService.createAgent(agentData);
-      res.status(201).json(agent);
+      res.status(201).json({ success: true, data: agent });
     } catch (error) {
       console.error('Error creating agent:', error);
-      res.status(500).json({ error: 'Failed to create agent' });
+      res.status(500).json({ success: false, error: 'Failed to create agent' });
     }
   }
 

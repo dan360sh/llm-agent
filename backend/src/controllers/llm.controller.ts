@@ -189,10 +189,10 @@ export class LLMController {
   private async getAllModels(req: Request, res: Response) {
     try {
       const models = this.llmService.getLLMModels();
-      res.json(models);
+      res.json({ success: true, data: models });
     } catch (error) {
       console.error('Error getting LLM models:', error);
-      res.status(500).json({ error: 'Failed to get LLM models' });
+      res.status(500).json({ success: false, error: 'Failed to get LLM models' });
     }
   }
 
@@ -202,13 +202,13 @@ export class LLMController {
       const model = this.llmService.getLLMModel(id);
       
       if (!model) {
-        return res.status(404).json({ error: 'Model not found' });
+        return res.status(404).json({ success: false, error: 'Model not found' });
       }
 
-      res.json(model);
+      res.json({ success: true, data: model });
     } catch (error) {
       console.error('Error getting LLM model:', error);
-      res.status(500).json({ error: 'Failed to get LLM model' });
+      res.status(500).json({ success: false, error: 'Failed to get LLM model' });
     }
   }
 
@@ -218,7 +218,7 @@ export class LLMController {
       
       // Валидация
       if (!modelData.name || !modelData.provider || !modelData.config) {
-        return res.status(400).json({ error: 'Name, provider, and config are required' });
+        return res.status(400).json({ success: false, error: 'Name, provider, and config are required' });
       }
 
       const model: LLMConfig = {
@@ -232,10 +232,10 @@ export class LLMController {
       };
 
       await this.llmService.addLLMModel(model);
-      res.status(201).json(model);
+      res.status(201).json({ success: true, data: model });
     } catch (error) {
       console.error('Error adding LLM model:', error);
-      res.status(500).json({ error: 'Failed to add LLM model' });
+      res.status(500).json({ success: false, error: 'Failed to add LLM model' });
     }
   }
 
@@ -246,7 +246,7 @@ export class LLMController {
 
       const existingModel = this.llmService.getLLMModel(id);
       if (!existingModel) {
-        return res.status(404).json({ error: 'Model not found' });
+        return res.status(404).json({ success: false, error: 'Model not found' });
       }
 
       const updatedModel: LLMConfig = {
@@ -257,10 +257,10 @@ export class LLMController {
       };
 
       await this.llmService.updateLLMModel(updatedModel);
-      res.json(updatedModel);
+      res.json({ success: true, data: updatedModel });
     } catch (error) {
       console.error('Error updating LLM model:', error);
-      res.status(500).json({ error: 'Failed to update LLM model' });
+      res.status(500).json({ success: false, error: 'Failed to update LLM model' });
     }
   }
 
@@ -270,14 +270,14 @@ export class LLMController {
 
       const model = this.llmService.getLLMModel(id);
       if (!model) {
-        return res.status(404).json({ error: 'Model not found' });
+        return res.status(404).json({ success: false, error: 'Model not found' });
       }
 
       await this.llmService.deleteLLMModel(id);
-      res.status(204).send();
+      res.json({ success: true });
     } catch (error) {
       console.error('Error deleting LLM model:', error);
-      res.status(500).json({ error: 'Failed to delete LLM model' });
+      res.status(500).json({ success: false, error: 'Failed to delete LLM model' });
     }
   }
 

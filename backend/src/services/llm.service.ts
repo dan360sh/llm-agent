@@ -93,12 +93,24 @@ export class LLMService {
     messages: Message[],
     onStream?: (chunk: string) => void
   ): Promise<string> {
+    console.log(`Generating response with model: ${modelId}`);
+    
     const provider = this.providers.get(modelId);
     if (!provider) {
+      console.error(`Provider not found for model: ${modelId}`);
+      console.log('Available providers:', Array.from(this.providers.keys()));
       throw new Error(`Provider not found for model: ${modelId}`);
     }
 
-    return await provider.generateResponse(messages, onStream);
+    try {
+      console.log(`Calling provider.generateResponse with ${messages.length} messages`);
+      const response = await provider.generateResponse(messages, onStream);
+      console.log(`Provider returned response: ${response?.substring(0, 100)}...`);
+      return response;
+    } catch (error) {
+      console.error(`Error from provider ${modelId}:`, error);
+      throw error;
+    }
   }
 
   supportsImages(modelId: string): boolean {
