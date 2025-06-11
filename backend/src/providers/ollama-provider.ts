@@ -25,6 +25,7 @@ export class OllamaProvider extends LLMProvider {
     onStream?: (chunk: string) => void
   ): Promise<string> {
     try {
+      console.log(messages, "messages1")
       const ollamaMessages = this.convertMessages(messages);
       
       if (onStream) {
@@ -43,7 +44,7 @@ export class OllamaProvider extends LLMProvider {
     onStream: (chunk: string) => void
   ): Promise<string> {
     console.log('OllamaProvider: Starting streaming response generation');
-    
+    console.log(messages, "messages")
     const response = await axios.post(
       `${this.config.baseURL}/api/chat`,
       {
@@ -65,11 +66,12 @@ export class OllamaProvider extends LLMProvider {
 
     return new Promise((resolve, reject) => {
       response.data.on('data', (chunk: Buffer) => {
+        console.log('Новый чанк');
         if (streamCompleted) {
           console.log('OllamaProvider: Stream already completed, ignoring chunk');
           return;
         }
-        
+        console.log('Новый чанк1');
         try {
           const lines = chunk.toString().split('\n').filter(line => line.trim());
           

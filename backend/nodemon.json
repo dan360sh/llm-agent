@@ -1,5 +1,16 @@
 {
-  "ts-node": {
-    "esm": true
+  "watch": ["src"],
+  "ext": "ts,js,json",
+  "ignore": [
+    "data/**/*",
+    "node_modules/**/*",
+    "dist/**/*",
+    "*.log",
+    "*.db",
+    "*.sqlite"
+  ],
+  "exec": "ts-node src/index.ts",
+  "env": {
+    "NODE_ENV": "development"
   }
 }

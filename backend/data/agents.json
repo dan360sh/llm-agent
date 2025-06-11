@@ -48,15 +48,5 @@
     "id": "e7946a20-42c3-4215-bf3b-ed6c1e2cd685",
     "createdAt": "2025-06-10T23:26:17.294Z",
     "updatedAt": "2025-06-10T23:26:17.294Z"
-  },
-  {
-    "name": "Test Agent WebSocket 2",
-    "description": "Test agent for WebSocket",
-    "systemPrompt": "You are a helpful AI assistant. Be concise and helpful.",
-    "llmConfigId": "f02955a3-44da-42fe-a7cd-b61bb3a090f0",
-    "mcpServerIds": [],
-    "id": "34cd802d-c88e-47a1-9fbc-99eb4ef03fe4",
-    "createdAt": "2025-06-10T23:26:24.195Z",
-    "updatedAt": "2025-06-10T23:26:24.195Z"
   }
 ]

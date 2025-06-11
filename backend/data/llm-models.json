@@ -149,5 +149,19 @@
     "supportsImages": false,
     "enabled": true,
     "createdAt": "2025-06-10T21:04:47.326Z"
+  },
+  {
+    "id": "74ad9010-6cf5-4868-9693-856284a939b4",
+    "name": "gggf",
+    "provider": "ollama",
+    "config": {
+      "baseURL": "http://localhost:11434",
+      "model": "llama2",
+      "temperature": 0.7,
+      "maxTokens": 3000
+    },
+    "supportsImages": true,
+    "enabled": true,
+    "createdAt": "2025-06-11T18:38:50.542Z"
   }
 ]

@@ -821,9 +821,290 @@
         "content": " Окей, what would you like to know or discuss? ",
         "images": [],
         "timestamp": "2025-06-10T23:53:39.977Z"
+      },
+      {
+        "id": "19fb855d-0ff3-4fbf-8a04-7a4285e6b5d5",
+        "role": "user",
+        "content": "прарапр",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:41.143Z"
+      },
+      {
+        "id": "9922ae35-89b5-4428-b686-fc32dd02e5c8",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:45.449Z"
+      },
+      {
+        "id": "703e5c88-54e1-471e-a2a2-4c092b795128",
+        "role": "user",
+        "content": "парапр",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:47.541Z"
+      },
+      {
+        "id": "5847576e-4985-40b1-87f6-0801835f703a",
+        "role": "assistant",
+        "content": " Прараpр, как можешь помочь мне? ",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:47.898Z"
+      },
+      {
+        "id": "8a32c4b2-8383-4b5e-8309-0f02857ee9b4",
+        "role": "user",
+        "content": "апрапр",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:55.483Z"
+      },
+      {
+        "id": "4f2e8a48-4d8f-4086-8d8c-4f5f6df9861f",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:55.546Z"
+      },
+      {
+        "id": "07c83210-18ec-4fbc-9ff2-037c5aad2f75",
+        "role": "user",
+        "content": "апрапр",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:58.805Z"
+      },
+      {
+        "id": "6b3c05a5-d521-4fb8-9e34-14dda97231ca",
+        "role": "assistant",
+        "content": " А правда, что не знаешь. ",
+        "images": [],
+        "timestamp": "2025-06-11T10:33:59.094Z"
+      },
+      {
+        "id": "a0dfcebb-6c2c-460f-9416-3d307a36e4db",
+        "role": "user",
+        "content": "апрапр",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:19.412Z"
+      },
+      {
+        "id": "3b2765bf-6902-4dfa-aefc-0df34e268673",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:19.468Z"
+      },
+      {
+        "id": "3fe4f144-d1ce-43b4-b787-e39149c81d46",
+        "role": "user",
+        "content": "рпарпа",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:29.127Z"
+      },
+      {
+        "id": "fea3fa92-8bba-4d44-b25e-c9f4060bbe83",
+        "role": "assistant",
+        "content": " Не уверен, что знаешь. ",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:29.414Z"
+      },
+      {
+        "id": "6efcfc04-efad-4485-a598-4945417cee9c",
+        "role": "user",
+        "content": "апап",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:50.911Z"
+      },
+      {
+        "id": "95c0d27f-ed28-4ecd-80ad-9da8a4fe6441",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:34:51.013Z"
+      },
+      {
+        "id": "4736293c-866e-4517-a661-2b201cb73e9c",
+        "role": "user",
+        "content": "нрнен",
+        "images": [],
+        "timestamp": "2025-06-11T10:35:26.249Z"
+      },
+      {
+        "id": "4f18655a-1c0b-402f-8b7f-a6b0e6348ca9",
+        "role": "assistant",
+        "content": " Ну, как можешь помочь мне? ",
+        "images": [],
+        "timestamp": "2025-06-11T10:35:26.584Z"
+      },
+      {
+        "id": "f6c1747b-7e91-44dd-96a3-60ae535749fc",
+        "role": "user",
+        "content": "вот",
+        "images": [],
+        "timestamp": "2025-06-11T10:36:45.561Z"
+      },
+      {
+        "id": "2acdf3f8-bc47-4885-8236-e92dec50d698",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:36:45.666Z"
+      },
+      {
+        "id": "d77adf94-9e67-4a6b-b767-ee8806fa1bdc",
+        "role": "user",
+        "content": "ччч",
+        "images": [],
+        "timestamp": "2025-06-11T10:54:00.764Z"
+      },
+      {
+        "id": "d8bf7408-04b2-4bb7-901d-b0930d733b43",
+        "role": "assistant",
+        "content": " Вот, что не знаю: \"Что такое парапр?\" ",
+        "images": [],
+        "timestamp": "2025-06-11T10:54:05.989Z"
+      },
+      {
+        "id": "bdbac852-1a38-44dd-93b7-6fe2da3c83b6",
+        "role": "user",
+        "content": "а",
+        "images": [],
+        "timestamp": "2025-06-11T10:54:16.815Z"
+      },
+      {
+        "id": "379ab159-839b-45a0-a355-bb4537b1ae5d",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T10:54:16.916Z"
+      },
+      {
+        "id": "3f7e106a-6d18-41e4-831c-e94bce2bef90",
+        "role": "user",
+        "content": "что",
+        "images": [],
+        "timestamp": "2025-06-11T13:27:15.846Z"
+      },
+      {
+        "id": "f102ce4a-78cd-488d-b0c5-5f23c11bd528",
+        "role": "user",
+        "content": "что",
+        "images": [],
+        "timestamp": "2025-06-11T13:32:29.329Z"
+      },
+      {
+        "id": "a8cd4376-6b74-4387-8867-2a75b1c7eaee",
+        "role": "assistant",
+        "content": " Привет! Как могу вам помочь? ",
+        "images": [],
+        "timestamp": "2025-06-11T13:32:39.036Z"
+      },
+      {
+        "id": "4e333392-2778-4e1e-967b-130e9e35f458",
+        "role": "user",
+        "content": "как хочешь",
+        "images": [],
+        "timestamp": "2025-06-11T13:32:44.614Z"
+      },
+      {
+        "id": "7df88df6-3caa-4902-9674-b40ffcc82ff2",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T13:32:44.740Z"
+      },
+      {
+        "id": "679edc8f-b938-448a-bdb8-82f66b62f807",
+        "role": "user",
+        "content": "привет",
+        "images": [],
+        "timestamp": "2025-06-11T13:39:23.752Z"
+      },
+      {
+        "id": "b0535473-66b9-4a04-8bb4-b73e688cfe74",
+        "role": "assistant",
+        "content": " Хочешь быть с нами и разговараться? ",
+        "images": [],
+        "timestamp": "2025-06-11T13:39:30.647Z"
+      },
+      {
+        "id": "204bb539-48dd-48df-b5fc-b661061a4b93",
+        "role": "user",
+        "content": "пппп",
+        "images": [],
+        "timestamp": "2025-06-11T13:40:11.187Z"
+      },
+      {
+        "id": "f7e4aeca-a071-4b3d-a8ad-92c678a82652",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T13:40:11.315Z"
+      },
+      {
+        "id": "ef563145-dea7-4492-96b6-e1332d05216e",
+        "role": "user",
+        "content": "вот",
+        "images": [],
+        "timestamp": "2025-06-11T13:40:52.627Z"
+      },
+      {
+        "id": "271fd257-fe00-41d7-ac60-05bfa96c1189",
+        "role": "assistant",
+        "content": " Ну, что не понимаешь? ",
+        "images": [],
+        "timestamp": "2025-06-11T13:40:52.964Z"
+      },
+      {
+        "id": "782de145-e07f-4f46-8789-a9fa38bbbb20",
+        "role": "user",
+        "content": "gg",
+        "images": [],
+        "timestamp": "2025-06-11T18:16:15.438Z"
+      },
+      {
+        "id": "d19cbb3a-d769-4861-a189-aa7078c7b001",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T18:16:24.425Z"
+      },
+      {
+        "id": "cf7b1f82-f026-4881-99cb-d5894a541ca8",
+        "role": "user",
+        "content": "tyty",
+        "images": [],
+        "timestamp": "2025-06-11T18:16:52.668Z"
+      },
+      {
+        "id": "710f952a-9e18-4eb5-a16a-dc05fadc4063",
+        "role": "assistant",
+        "content": " Конечно, я уже говорил! Как могу вам помочь? ",
+        "images": [],
+        "timestamp": "2025-06-11T18:16:53.258Z"
+      },
+      {
+        "id": "80be5ac3-4ee3-47b9-8540-991db6ffe052",
+        "role": "user",
+        "content": "dfdf",
+        "images": [],
+        "timestamp": "2025-06-11T18:30:16.175Z"
+      },
+      {
+        "id": "937870eb-e4d1-4e7d-9942-cfd529073ddb",
+        "role": "assistant",
+        "content": "",
+        "images": [],
+        "timestamp": "2025-06-11T18:31:21.775Z"
       }
     ],
     "createdAt": "2025-06-10T23:52:57.301Z",
-    "updatedAt": "2025-06-10T23:53:39.977Z"
+    "updatedAt": "2025-06-11T18:31:21.775Z"
+  },
+  {
+    "id": "ec6dbf12-e171-4c51-936f-4f3b060569c3",
+    "name": "gtretert",
+    "agentId": "fe8fd7c2-eeb1-4bd6-a534-520a263ad2ac",
+    "messages": [],
+    "createdAt": "2025-06-11T18:40:27.275Z",
+    "updatedAt": "2025-06-11T18:40:27.275Z"
   }
 ]
